@@ -10,6 +10,7 @@ cc.director._scenesStack[0].getGameLayer().onMove
 /// log move
 const moveFunc = cc.director._scenesStack[0].getGameLayer().onMove;
 const gameLayer = cc.director._scenesStack[0].getGameLayer();
+const logic = gameLayer.getLogic();
 cc.director._scenesStack[0].getGameLayer().onMove = (...args) => {
   console.log(...args);
   moveFunc.call(gameLayer, ...args);
@@ -29,13 +30,28 @@ gameLayer.chessPieces.map((chess) => ({
 }))
 
 
+/// logic
+/// getMyPos()
+/// processMovePiece(a1, b1, a2, b2)
+
+
 /// setOpacity 0->1000
 /// gameLayer.selectPiece func
 ///          .pieceSelected
 
+/// chess
+// this.lmColStart = a;
+// this.lmRowStart = b;
+// this.lmColFinish = d;
+// this.lmRowFinish = e;
+
 
 /// chess type
 BkChessType = { VUA: 0, SI: 1, TUONG: 2, XE: 3, PHAO: 4, MA: 5, TOT: 6 };
+
+
+/// get XY by location
+gameLayer._getLocationPos(index)
 
 
 /// draw

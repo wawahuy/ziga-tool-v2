@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "node ./src/index.js",
     "build-pkg": "pkg --output build/yuh-tool ."
   },
   "pkg": {
