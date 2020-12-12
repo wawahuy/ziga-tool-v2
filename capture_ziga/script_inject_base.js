@@ -1,6 +1,6 @@
   let script = {
     init: () => {
-      script.scene =   cc.director._scenesStack[0];
+      script.scene = cc.director._scenesStack[0];
       script.gameLayer = script.scene.getGameLayer();
       script.chessType = { VUA: 0, SI: 1, TUONG: 2, XE: 3, PHAO: 4, MA: 5, TOT: 6 };
       script.initMoveListener();

@@ -32,13 +32,13 @@
   link.id   = 'myCss';
   link.rel  = 'stylesheet';
   link.type = 'text/css';
-  link.href = 'http://localhost:3000/inject/styles.css';
+  link.href = 'http://localhost:3000/styles.css';
   link.media = 'all';
   link.onerror = () => console.log('error stylesheet');
   head.appendChild(link);
 
   const script  = document.createElement('script');
-  script.src = 'http://localhost:3000/inject/bundle.js';
+  script.src = 'http://localhost:3000/inject.bundle.js';
   link.onerror = () => console.log('error script');
   document.body.appendChild(script);
 })();

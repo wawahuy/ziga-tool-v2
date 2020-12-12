@@ -43,7 +43,7 @@ const config = (env, options) => {
 
   return {
     entry: {
-      inject: "./src/index.js"
+      inject: "./src/index.ts"
     },
     output: {
       path: path.resolve(__dirname, "dist"),
@@ -85,7 +85,7 @@ const config = (env, options) => {
               loader: "file-loader",
               options: {
                 name: "[name].[ext]",
-                outputPath: "./assets/images"
+                outputPath: "images"
               }
             }
           ]
@@ -97,7 +97,7 @@ const config = (env, options) => {
               loader: "file-loader",
               options: {
                 name: "[name].[ext]",
-                outputPath: "./assets/fonts"
+                outputPath: "fonts"
               }
             }
           ]
@@ -107,7 +107,8 @@ const config = (env, options) => {
     plugins,
     devServer: {
       hot: true,
-      port: 3000
+      port: 3000,
+      disableHostCheck : true
     }
   }
 }
