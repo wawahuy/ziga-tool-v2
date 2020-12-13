@@ -4,7 +4,16 @@ export interface IPiece {
   colIndex: number;
   rowIndex: number;
   index: number;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
   chessType: EChessType;
+}
+
+export interface ISize {
+  width: number;
+  height: number;
 }
 
 export interface IPoint {
@@ -34,6 +43,10 @@ export default class GameInjectService {
   snapshotBaseFinishGame = this.gameLayer.onFinishGame;
 
   constructor() {
+  }
+
+  get size(): ISize {
+    return cc.director._winSizeInPoints;
   }
 
   get scene() {
@@ -89,7 +102,7 @@ export default class GameInjectService {
    * *** LISTENER    ****
    * ********************
    */
-  injectMoveListener(callback: (ax: number, ay: number, bx: number, by: number, time: number) => true) {
+  injectMoveListener(callback: (ax: number, ay: number, bx: number, by: number, time: number) => boolean) {
     let injectListen = (...args: any[]) => {
       const [a, b, c, d, e] = args;
       if (callback(a, b, c, d, e)) {
@@ -100,7 +113,7 @@ export default class GameInjectService {
     this.gameLayer.onMove = injectListen;
   }
 
-  injectSelectListener(callback: (indexChess: number) => true) {
+  injectSelectListener(callback: (indexChess: number) => boolean) {
     const injectListen = (...args: any[]) => {
       if (callback(args[0])) {
         this.snapshotBaseSelectPiece.call(this.gameLayer, ...args);
@@ -110,7 +123,7 @@ export default class GameInjectService {
     this.gameLayer.selectPiece = injectListen;
   }
 
-  injectTouchMoveListener(callback: (point: IPoint) => true) {
+  injectTouchMoveListener(callback: (point: IPoint) => boolean) {
     const injectTouchListener = (x: number, y: number) => {
       if (callback({x, y})) {
         this.snapshotBaseTouchUpHandle.call(this.gameLayer, x, y);

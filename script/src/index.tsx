@@ -1,12 +1,20 @@
 import React from "react"
 import ReactDOM from "react-dom"
 import style from "./index.scss"
+import Inject from "./containers/Inject";
 
 function App() {
   return (
     <>
+    {
+      false &&
       <section className={style.inject}>
       </section>
+    }
+    {
+      true &&
+      <Inject />
+    }
     </>
   )
 }
