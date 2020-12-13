@@ -26,7 +26,7 @@ export enum EChessType {
   TOT = 6
 }
 
-export default class InjectService {
+export default class GameInjectService {
   snapshotBaseMove = this.gameLayer.onMove;
   snapshotBaseSelectPiece = this.gameLayer.selectPiece;
   snapshotBaseTouchUpHandle = this.gameLayer.touchUpHandle;

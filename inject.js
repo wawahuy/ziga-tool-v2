@@ -32,7 +32,7 @@
   link.id   = 'myCss';
   link.rel  = 'stylesheet';
   link.type = 'text/css';
-  link.href = 'http://localhost:3000/styles.css';
+  link.href = 'http://localhost:3000/inject.css';
   link.media = 'all';
   link.onerror = () => console.log('error stylesheet');
   head.appendChild(link);

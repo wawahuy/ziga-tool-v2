@@ -2,6 +2,7 @@ const path = require("path")
 const webpack = require("webpack")
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const WebpackObfuscator = require('webpack-obfuscator');
+const HTMLWebpackPlugin = require('html-webpack-plugin');
 const obfuscatorConfig = require('./obfuscator.config');
 
 const config = (env, options) => {
@@ -39,11 +40,13 @@ const config = (env, options) => {
 
   if (isProduction) {
     plugins.push(new WebpackObfuscator(obfuscatorConfig));
+  } else {
+    plugins.push(new HTMLWebpackPlugin({ template: path.resolve(__dirname, 'public/dev.html') }))
   }
 
   return {
     entry: {
-      inject: "./src/index.ts"
+      inject: "./src/index.tsx"
     },
     output: {
       path: path.resolve(__dirname, "dist"),
@@ -71,33 +74,24 @@ const config = (env, options) => {
                 sourceMap: true,
                 importLoaders: 1,
                 modules: {
-                  localIdentName: "[local]___[hash:base64:5]"
+                  localIdentName: "[local]"
                 }
+                // modules: {
+                //   localIdentName: "[local]___[hash:base64:5]"
+                // }
               }
             },
             "sass-loader"
           ]
         },
         {
-          test: /\.(jpg|png|gif|svg)$/,
+          test: /\.(jpg|png|gif|svg|ttf|woff|jfproj)$/,
           use: [
             {
               loader: "file-loader",
               options: {
                 name: "[name].[ext]",
-                outputPath: "images"
-              }
-            }
-          ]
-        },
-        {
-          test: /\.(ttf|woff|jfproj)$/,
-          use: [
-            {
-              loader: "file-loader",
-              options: {
-                name: "[name].[ext]",
-                outputPath: "fonts"
+                outputPath: "/"
               }
             }
           ]
