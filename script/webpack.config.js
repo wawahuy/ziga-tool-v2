@@ -114,8 +114,8 @@ const config = (env, options) => {
             {
               loader: "file-loader",
               options: {
-                name: "[name].[hash].[ext]",
-                outputPath: "/"
+                name: "[name].[ext]",
+                outputPath: ""
               }
             }
           ]
@@ -127,6 +127,7 @@ const config = (env, options) => {
       hot: true,
       inline:true,
       port: envDefined.INJECT_PORT,
+      // publicPath: path.join(__dirname, '/src/assets')
     },
     optimization: {
       splitChunks: {

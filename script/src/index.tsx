@@ -1,13 +1,13 @@
 import React from "react"
 import ReactDOM from "react-dom"
 import style from "./index.scss"
-import Login from "./containers/Login"
 
 function App() {
   return (
-    <section className={style.inject}>
-      <Login />
-    </section>
+    <>
+      <section className={style.inject}>
+      </section>
+    </>
   )
 }
 
