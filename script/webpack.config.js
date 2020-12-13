@@ -4,17 +4,21 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const WebpackObfuscator = require('webpack-obfuscator');
 const HTMLWebpackPlugin = require('html-webpack-plugin');
 const obfuscatorConfig = require('./obfuscator.config');
+// ~antd/dist/antd.css
 
 const config = (env, options) => {
   const isProduction = options.mode == "production";
 
+  // env
+  const envDefined = require('dotenv').config( {
+    path: path.join(__dirname, '/../env', isProduction ? 'prod.env' : 'dev.env')
+  }).parsed;
+
   // config rules typescript
   const rulesTypescript = {
     test: /\.(ts|tsx)$/,
-    exclude: [/node_modules/, /dist/],
-    use: [
-      "babel-loader"
-    ]
+    exclude: /node_modules/,
+    use: []
   }
 
   if (isProduction) {
@@ -25,18 +29,63 @@ const config = (env, options) => {
             rotateStringArray: true
         }
       },
-      ...rulesTypescript.use
+      "babel-loader"
+    ]
+  } else {
+    rulesTypescript.use = [
+      {
+        loader: require.resolve('babel-loader'),
+        options: {
+          sourceMap: !isProduction
+        }
+      }
+    ];
+  }
+
+
+  // config rules scss
+  const rulesScss = {
+    test: /\.(scss|sass|css)$/,
+    exclude: /node_modules/,
+    use: [
+      {
+        loader: "css-loader",
+        options: {
+          modules: true,
+          sourceMap: !isProduction,
+          importLoaders: 1,
+          modules: {
+            localIdentName: "[local]"
+          }
+        }
+      },
+      "sass-loader"
+    ]
+  };
+
+  if (isProduction) {
+    rulesScss.use = [
+      MiniCssExtractPlugin.loader,
+      ...rulesScss.use
+    ]
+  } else {
+    rulesScss.use = [
+      "style-loader",
+      ...rulesScss.use
     ]
   }
 
 
   // config plugins
   const plugins = [
-    new MiniCssExtractPlugin({
+    isProduction && new MiniCssExtractPlugin({
       filename: "[name].css",
       chunkFilename: "[id].css"
+    }),
+    new webpack.DefinePlugin({
+      "process.env": envDefined
     })
-  ]
+  ].filter((a) => !!a);
 
   if (isProduction) {
     plugins.push(new WebpackObfuscator(obfuscatorConfig));
@@ -53,44 +102,19 @@ const config = (env, options) => {
       filename: "[name].bundle.js"
     },
     resolve: {
-      extensions: [".ts", ".tsx", ".js", ".jsx"],
-      alias: {
-        "@": path.resolve("src"),
-        "@@": path.resolve()
-      }
+      extensions: [".ts", ".tsx", ".js", ".jsx"]
     },
     module: {
       rules: [
         rulesTypescript,
-        {
-          test: /\.(scss|sass|css)$/,
-          exclude: /node_modules/,
-          use: [
-            MiniCssExtractPlugin.loader,
-            {
-              loader: "css-loader",
-              options: {
-                modules: true,
-                sourceMap: true,
-                importLoaders: 1,
-                modules: {
-                  localIdentName: "[local]"
-                }
-                // modules: {
-                //   localIdentName: "[local]___[hash:base64:5]"
-                // }
-              }
-            },
-            "sass-loader"
-          ]
-        },
+        rulesScss,
         {
           test: /\.(jpg|png|gif|svg|ttf|woff|jfproj)$/,
           use: [
             {
               loader: "file-loader",
               options: {
-                name: "[name].[ext]",
+                name: "[name].[hash].[ext]",
                 outputPath: "/"
               }
             }
@@ -101,9 +125,22 @@ const config = (env, options) => {
     plugins,
     devServer: {
       hot: true,
-      port: 3000,
-      disableHostCheck : true
-    }
+      inline:true,
+      port: envDefined.INJECT_PORT,
+    },
+    optimization: {
+      splitChunks: {
+          cacheGroups: {
+              commons: {
+                  // this takes care of all the vendors in your files
+                  // no need to add as an entrypoint.
+                  test: /[\\/]node_modules[\\/]/,
+                  name: 'vendors',
+                  chunks: 'all'
+              }
+          }
+      }
+    },
   }
 }
 

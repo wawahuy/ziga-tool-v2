@@ -1,0 +1,29 @@
+.containerLogin {
+  padding: 30px 10px;
+
+  .containerLogo {
+  }
+
+  .containerInput {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .keyInput {
+      width: 400px;
+    }
+
+    .checkbox {
+      color: #ffffff;
+      margin-top: 10px;
+    }
+
+    .cntSubmit {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 10px;
+    }
+  }
+}

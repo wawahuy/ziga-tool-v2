@@ -1,13 +1,13 @@
 import React from "react"
 import ReactDOM from "react-dom"
-import { Button } from "antd"
 import style from "./index.scss"
+import Login from "./containers/Login"
 
 function App() {
   return (
-    <div className={style.inject}>
-       <Button type="primary">Primary Button</Button>
-    </div>
+    <section className={style.inject}>
+      <Login />
+    </section>
   )
 }
 

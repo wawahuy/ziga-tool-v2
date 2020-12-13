@@ -1,7 +1,3 @@
-// BkLogicManager.initGameLogic()
-// BkGlobal.currentGameID
-//     CO_TUONG: 19,
-//     CO_UP: 20,
 import { EventEmitter } from 'events';
 
 export enum EInjectNetworkType {

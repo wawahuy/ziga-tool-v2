@@ -1,7 +1,10 @@
 # ziga-tool-v2
 
-- tools: build app & server uci
-- server: transport inject script & authentication key
-- inject-script: element of server but run on browser
+## Development
+  - script port 3000
+  - app port 14442
+  - server manager port 4000
 
-inject-script -> server -> tools -> client
+## Production
+  - script (proxy) & app port 14442
+  - server manager 80
