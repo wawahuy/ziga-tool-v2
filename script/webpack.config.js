@@ -3,6 +3,7 @@ const webpack = require("webpack")
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const WebpackObfuscator = require('webpack-obfuscator');
 const HTMLWebpackPlugin = require('html-webpack-plugin');
+const CleanTerminalPlugin = require('clean-terminal-webpack-plugin');
 const obfuscatorConfig = require('./obfuscator.config');
 // ~antd/dist/antd.css
 
@@ -88,6 +89,7 @@ const config = (env, options) => {
   ].filter((a) => !!a);
 
   if (isProduction) {
+    plugins.push(new CleanTerminalPlugin());
     plugins.push(new WebpackObfuscator(obfuscatorConfig));
   } else {
     plugins.push(new HTMLWebpackPlugin({ template: path.resolve(__dirname, 'public/dev.html') }))
