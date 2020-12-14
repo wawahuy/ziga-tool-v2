@@ -36,7 +36,7 @@ export enum EChessType {
 }
 
 export default class GameInjectService {
-  snapshotBaseMove = this.gameLayer.onMove;
+  snapshotBasePieceMove = this.gameLayer.onMove;
   snapshotBaseSelectPiece = this.gameLayer.selectPiece;
   snapshotBaseTouchUpHandle = this.gameLayer.touchUpHandle;
   snapshotBaseDealCard = this.gameLayer.onDealCard;
@@ -90,10 +90,16 @@ export default class GameInjectService {
     return this.gameLayer._getLocationPos(index);
   }
 
-  pointToIndex(point: IPoint) {
-    const row = this.gameLayer.getRowIndex(point.y);
-    const col = this.gameLayer.getColIndex(point.x);
-    return { col, row };
+  pointToIndex(point: IPoint): IPoint {
+    const y = this.gameLayer.getRowIndex(point.y);
+    const x = this.gameLayer.getColIndex(point.x);
+    return { x, y };
+  }
+
+  indexToPoint(index: {col: number; row: number}): IPoint {
+    const x = this.gameLayer.getPosX(index.col);
+    const y = this.gameLayer.getPosX(index.row);
+    return { x, y };
   }
 
 
@@ -102,11 +108,11 @@ export default class GameInjectService {
    * *** LISTENER    ****
    * ********************
    */
-  injectMoveListener(callback: (ax: number, ay: number, bx: number, by: number, time: number) => boolean) {
+  injectPieceMoveListener(callback: (ax: number, ay: number, bx: number, by: number, time: number) => boolean) {
     let injectListen = (...args: any[]) => {
       const [a, b, c, d, e] = args;
       if (callback(a, b, c, d, e)) {
-        this.snapshotBaseMove.call(this.gameLayer, ...args);
+        this.snapshotBasePieceMove.call(this.gameLayer, ...args);
       }
       console.log('Inject move', ...args);
     }
@@ -123,7 +129,7 @@ export default class GameInjectService {
     this.gameLayer.selectPiece = injectListen;
   }
 
-  injectTouchMoveListener(callback: (point: IPoint) => boolean) {
+  injectTouchUpListener(callback: (point: IPoint) => boolean) {
     const injectTouchListener = (x: number, y: number) => {
       if (callback({x, y})) {
         this.snapshotBaseTouchUpHandle.call(this.gameLayer, x, y);

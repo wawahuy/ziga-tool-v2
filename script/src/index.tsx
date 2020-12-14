@@ -21,5 +21,6 @@ function App() {
 
 const injectContainer = document.createElement('div');
 const canvas = document.getElementById('Cocos2dGameContainer');
+canvas?.setAttribute('id', 'Cocos2dGameContainerC');
 canvas?.appendChild(injectContainer);
 ReactDOM.render(<App />, injectContainer);

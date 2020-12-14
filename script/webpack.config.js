@@ -15,6 +15,15 @@ const config = (env, options) => {
     path: path.join(__dirname, '/../env', isProduction ? 'prod.env' : 'dev.env')
   }).parsed;
 
+  const envDefinedStr = {};
+  Object.keys(envDefined).map(k => {
+    if (Number(k)) {
+      envDefinedStr[k] = envDefined[k];
+    } else {
+      envDefinedStr[k] = `"${envDefined[k]}"`;
+    }
+  });
+
   // config rules typescript
   const rulesTypescript = {
     test: /\.(ts|tsx)$/,
@@ -77,6 +86,7 @@ const config = (env, options) => {
   }
 
 
+
   // config plugins
   const plugins = [
     isProduction && new MiniCssExtractPlugin({
@@ -84,7 +94,7 @@ const config = (env, options) => {
       chunkFilename: "[id].css"
     }),
     new webpack.DefinePlugin({
-      "process.env": envDefined
+      "process.env": envDefinedStr
     })
   ].filter((a) => !!a);
 
@@ -129,7 +139,6 @@ const config = (env, options) => {
       hot: true,
       inline:true,
       port: envDefined.INJECT_PORT,
-      // publicPath: path.join(__dirname, '/src/assets')
     },
     optimization: {
       splitChunks: {
