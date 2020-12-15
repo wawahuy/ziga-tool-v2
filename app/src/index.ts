@@ -1,21 +1,19 @@
-import Http from 'http';
-import Express from 'express';
-import { Socket } from 'socket.io';
 import path from 'path';
+import fs from 'fs';
 
 /// parsed .env file in app
-const envDefined = require('dotenv').config( {
-    path: path.join(__dirname, '/.env')
-}).parsed;
-process.env = Object.assign(process.env || {}, envDefined);
+const pathAppENV = path.join(__dirname, '/.env');
+if (fs.existsSync(pathAppENV)) {
+	const envDefined = require('dotenv').config( {
+			path: pathAppENV
+	}).parsed;
+  process.env = Object.assign(process.env || {}, envDefined);
+  process.env.IS_APP = "app";
+}
+
 
 // boots
-const app = Express();
-const server = Http.createServer(app);
-const io = require('socket.io')(server);
-server.listen(process.env.APP_PORT || -1);
+import './boots';
 
-
-io.on('connection', function(socket: Socket){
-    console.log('a user connected with id %s', socket.id);
-});
+import { isApp } from './helpers/common';
+console.log(isApp());

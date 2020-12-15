@@ -2,6 +2,8 @@
 
 npm run build
 
+cp ./bin/ucci.exe ./dist
+
 cp ../env/dev.env ./dist/.env
 
 npm run build-pkg
