@@ -14,6 +14,3 @@ if (fs.existsSync(pathAppENV)) {
 
 // boots
 import './boots';
-
-import { isApp } from './helpers/common';
-console.log(isApp());

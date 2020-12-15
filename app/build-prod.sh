@@ -2,10 +2,10 @@
 
 npm run build
 
-cp ./bin/ucci.exe ./dist
-
 cp ../env/prod.env ./dist/.env
 
 npm run build-pkg
+
+cp ./bin/ucci.exe ./build/ucci.exe
 
 read -r -p "Press enter to continue"
