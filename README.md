@@ -24,3 +24,7 @@
   - thực hiện việc check token vào lưu giữ các inject file
   - port:
     + dev/prod: 4000
+
+## Build
+  - build app vào ./app/build-xxx.sh để xây dựng
+  - build server xem cấu hình jenkins và docker
