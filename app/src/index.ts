@@ -5,7 +5,7 @@ import fs from 'fs';
 const pathAppENV = path.join(__dirname, '/.env');
 if (fs.existsSync(pathAppENV)) {
 	const envDefined = require('dotenv').config( {
-			path: pathAppENV
+		path: pathAppENV
 	}).parsed;
   process.env = Object.assign(process.env || {}, envDefined);
   process.env.IS_APP = "app";
@@ -14,3 +14,4 @@ if (fs.existsSync(pathAppENV)) {
 
 // boots
 import './boots';
+import './helpers/ucci';
