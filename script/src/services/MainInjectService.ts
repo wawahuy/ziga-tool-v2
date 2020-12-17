@@ -1,6 +1,6 @@
-import {EventEmitter} from 'events';
+import { EventEmitter } from 'events';
 import GameInjectService, { IPiece, IPoint } from './GameInjectService';
-import SocketService from './SocketService';
+import { SocketService } from './SocketService';
 import { EGameType, SocketInjectService } from './SocketInjectService';
 import * as _ from 'lodash';
 
@@ -37,10 +37,11 @@ export interface INumKeyPair {
 }
 
 export class MainInjectService extends EventEmitter implements MainInjectAction {
-  menu: INumKeyPair;
+  menu: INumKeyPair = {};
   gameInject!: GameInjectService;
   socketInject!: SocketInjectService;
-  elementCanvas!: HTMLCanvasElement;
+  socketMain!: SocketService;
+  elementCanvas: HTMLCanvasElement | undefined;
 
   pieceSelected!: IPiece;
   ponder: boolean = false;
@@ -48,36 +49,41 @@ export class MainInjectService extends EventEmitter implements MainInjectAction 
 
   constructor() {
     super();
-    // this.elementCanvas = document.getElementById('Cocos2dGameContainer')?.getElementsByTagName('canvas')[0];
+    this.elementCanvas = document.getElementById('Cocos2dGameContainer')?.getElementsByTagName('canvas')[0];
     // if (this.elementCanvas) {
     //   this.elementCanvas.onmousemove = this.touchMoveListener.bind(this);
     // }
-    // this.socketInject = new SocketInjectService;
-    // this.socketInject.on('join', this.joinListener.bind(this));
-    this.menu = {};
-    this.initMenu();
+    this.socketMain = SocketService.instance();
+    this.socketInject = new SocketInjectService;
+    this.socketInject.on('join', this.joinListener.bind(this));
+    this.socketInject.on('leave', this.outListener.bind(this));
   }
 
   private initMenu() {
-    setTimeout(() => {
-      this.menu[EMenu.AUTO] = localStorage.getItem('yuh_' + EMenu.AUTO) == "1";
-      this.menu[EMenu.FIND_BEST_MOVE] = localStorage.getItem('yuh_' + EMenu.FIND_BEST_MOVE) == "1";
-      this.menu[EMenu.DEPTH] = localStorage.getItem('yuh_' + EMenu.DEPTH) || 15;
-      this.emit(EMainInjectEvent.DRAW_MENU, this.menu);
-    });
+    this.menu[EMenu.AUTO] = localStorage.getItem('yuh_' + EMenu.AUTO) == "1";
+    this.menu[EMenu.FIND_BEST_MOVE] = localStorage.getItem('yuh_' + EMenu.FIND_BEST_MOVE) == "1";
+    this.menu[EMenu.DEPTH] = localStorage.getItem('yuh_' + EMenu.DEPTH) || 15;
+    this.emit(EMainInjectEvent.DRAW_MENU, this.menu);
   }
 
   private joinListener(typeGame: EGameType) {
     if (typeGame == EGameType.CO_TUONG) {
       console.log('open cot uong');
       setTimeout(() => {
+        this.socketMain.openCotuong();
         this.ponder = false;
         this.gameInject = new GameInjectService;
         this.gameInject.injectSelectListener(this.selectListener.bind(this));
         this.gameInject.injectTouchUpListener(this.touchUpListener.bind(this));
         this.gameInject.injectPieceMoveListener(this.pieceMoveListener.bind(this));
+        this.initMenu();
       }, 1000);
     }
+  }
+
+  private outListener() {
+    console.log('out cot uong');
+    this.socketMain.closeCotuong();
   }
 
   private selectListener(indexChess: number) {
@@ -98,11 +104,12 @@ export class MainInjectService extends EventEmitter implements MainInjectAction 
     return true;
   }
 
-  private touchMoveListener(e: MouseEvent) {
-  }
 
-  private pieceMoveListener(ax: number, ay: number, bx: number, by: number, time: number) {
+  private pieceMoveListener(ax: number, ay: number, bx: number, by: number) {
     this.emit(EMainInjectEvent.REMOVE_ALL_DRAW);
+    this.gameInject.gameLayer.isReverse && ((ay = 9 - ay), (bx = 9 - bx), (ax = 8 - ax), (by = 8 - by));
+    console.log('test move', ax, ay, bx, by);
+    this.socketMain.moveCotuong([ax, ay, bx, by]);
     return true;
   }
 

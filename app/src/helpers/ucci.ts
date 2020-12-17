@@ -55,12 +55,17 @@ export class UCCI extends EventEmitter {
     return false;
   }
 
+  ucci() {
+    this.command('ucci');
+  }
+
   ready() {
     this.command('isready');
   }
 
   quit() {
     this._process?.kill();
+    this._process = undefined;
   }
 
   setOption(type: EUCCIOption, value: any) {
