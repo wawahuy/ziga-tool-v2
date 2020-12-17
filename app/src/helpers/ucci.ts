@@ -2,6 +2,7 @@ import fs from 'fs';
 import { EventEmitter } from 'events';
 import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
 import { pathEngineUCCI } from "./common";
+import System from './system';
 
 export interface IUCCIConfig {
   path?: string;
@@ -135,35 +136,35 @@ export class UCCI extends EventEmitter {
   }
 }
 
-(async () => {
-  const engine = new UCCI;
-  engine.on('readyok', () => console.log('ready'));
-  engine.on('open', () => console.log('open'));
-  engine.on('exit', () => console.log('quit'));
-  engine.on('data', (chunk: any) => console.log(chunk.toString('utf-8')));
-  engine.on('command', (command: string) => console.log(">>>>" + command));
+// (async () => {
+//   const engine = new UCCI;
+//   engine.on('readyok', () => console.log('ready'));
+//   engine.on('open', () => console.log('open'));
+//   engine.on('exit', () => console.log('quit'));
+//   engine.on('data', (chunk: any) => console.log(chunk.toString('utf-8')));
+//   engine.on('command', (command: string) => console.log(">>>>" + command));
 
-  if (engine.checkPath()) {
-    engine.load();
-    engine.command('ucci');
-    engine.on('bestmove', (move) => console.log(move));
-    engine.on('infomove', (depth, move) => console.log(depth, move));
+//   if (engine.checkPath()) {
+//     engine.load();
+//     engine.command('ucci');
+//     engine.on('bestmove', (move) => console.log(move));
+//     engine.on('infomove', (depth, move) => console.log(depth, move));
 
-    engine.on('ucciok', () => {
-      engine.setOption(EUCCIOption.Hash, 2048);
-      engine.setOption(EUCCIOption.Threads, 8);
-      engine.ready();
-    });
+//     engine.on('ucciok', () => {
+//       engine.setOption(EUCCIOption.Hash, 2048);
+//       engine.setOption(EUCCIOption.Threads, 8);
+//       engine.ready();
+//     });
 
-    engine.on('readyok', () => {
-      engine.command('position startpos');
-      engine.command('go depth 20');
-      setTimeout(() => {
-        engine.stopMove();
-      }, 10000);
-      setTimeout(() => {
-        engine.quit();
-      }, 15000);
-    });
-  }
-})();
+//     engine.on('readyok', () => {
+//       engine.command('position startpos');
+//       engine.command('go depth 20');
+//       setTimeout(() => {
+//         engine.stopMove();
+//       }, 10000);
+//       setTimeout(() => {
+//         engine.quit();
+//       }, 15000);
+//     });
+//   }
+// })();
