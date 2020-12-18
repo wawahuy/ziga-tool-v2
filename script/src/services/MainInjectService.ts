@@ -1,8 +1,10 @@
 import { EventEmitter } from 'events';
 import GameInjectService, { IPiece, IPoint } from './GameInjectService';
-import { SocketService } from './SocketService';
+import { IMoveInfo, SocketService } from './SocketService';
 import { EGameType, SocketInjectService } from './SocketInjectService';
 import * as _ from 'lodash';
+import { CCColor } from '../helpers/CCColor';
+import CCLine from '../helpers/CCLine';
 
 SocketService.instance()
 
@@ -47,6 +49,8 @@ export class MainInjectService extends EventEmitter implements MainInjectAction 
   ponder: boolean = false;
   ponderTarget!: IPoint;
 
+  nodeDraw: any[] = [];
+
   constructor() {
     super();
     this.elementCanvas = document.getElementById('Cocos2dGameContainer')?.getElementsByTagName('canvas')[0];
@@ -54,6 +58,7 @@ export class MainInjectService extends EventEmitter implements MainInjectAction 
     this.socketInject = new SocketInjectService;
     this.socketInject.on('join', this.joinListener.bind(this));
     this.socketInject.on('leave', this.outListener.bind(this));
+    this.socketMain.on('infomove', this.onEngineInfoMove.bind(this));
   }
 
   private initMenu() {
@@ -113,10 +118,21 @@ export class MainInjectService extends EventEmitter implements MainInjectAction 
 
   private pieceMoveListener(ax: number, ay: number, bx: number, by: number) {
     this.emit(EMainInjectEvent.REMOVE_ALL_DRAW);
-    this.gameInject.gameLayer.isReverse && ((ay = 9 - ay), (bx = 9 - bx), (ax = 8 - ax), (by = 8 - by));
+    // this.gameInject.gameLayer.isReverse && ((ay = 9 - ay), (by = 9 - by), (ax = 8 - ax), (bx = 8 - bx));
     console.log('test move', ax, ay, bx, by);
     this.socketMain.moveCotuong([ax, ay, bx, by]);
+    this.nodeDraw.map(node => this.gameInject.removeChild(node));
     return true;
+  }
+
+  private onEngineInfoMove(data: IMoveInfo) {
+    const start = this.gameInject.indexToPoint({ col: data.move.ax, row: data.move.ay });
+    const end = this.gameInject.indexToPoint({ col: data.move.bx, row: data.move.by });
+    const line = new CCLine();
+    const color = CCColor(255, 255, 255, 255);
+    line.set(start.x, start.y, end.x, end.y, 2, color);
+    this.gameInject.addChild(line.node);
+    this.nodeDraw.push(line.node);
   }
 
   computeRealY(y: number) {

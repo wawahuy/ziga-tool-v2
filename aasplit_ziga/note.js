@@ -56,5 +56,3 @@ gameLayer._getLocationPos(index)
 
 /// draw
 /// cc.color
-var drawNode = new cc.DrawNode();
-drawNode.drawSegment(cc.p(0,0), cc.p(200,300),2,cc.Color(250,0,0,255));

@@ -2,13 +2,14 @@ import { EventEmitter } from 'events';
 import WebSocket from 'ws';
 import { EUCCIOption, UCCI } from './ucci';
 import System from './system';
+import * as _ from 'lodash';
 
 class Player extends EventEmitter {
   engine!: UCCI;
   moves: string[];
   isBlackChess: boolean = false;
   socket!: WebSocket;
-
+  prevMove!: Object | null;
   
   constructor() {
     super();
@@ -58,6 +59,8 @@ class Player extends EventEmitter {
   private _onStartCotuong(isBlack: boolean) {
     console.log('start cotuong, black=', isBlack);
     this.isBlackChess = isBlack;
+    this.prevMove = null;
+    this.moves = [];
     if (!isBlack) {
       this.go();
     }
@@ -68,21 +71,25 @@ class Player extends EventEmitter {
   }
 
   private _onMoveCotuong(args: number[]) {
+    if (this.prevMove && _.isEqual(this.prevMove, args)) {
+      return;
+    }
+    this.prevMove = args;
     const [ ax, ay, bx, by ] = args;
-    const move = this._converToMoveStr(ax, ay, bx, by);
+    const move = this._convertToMoveStr(ax, ay, bx, by);
     this.moves.push(move);
 
     console.log('move cotuong', args, move);
-    const size = this.moves.length + 1;
+    const size = this.moves.length;
     if (
-      this.isBlackChess && size % 2 === 0 ||
-      !this.isBlackChess && size % 2 !== 0 
+      (this.isBlackChess && size % 2 !== 0) ||
+      (!this.isBlackChess && size % 2 === 0)
     ) {
       this.go();
     }
   }
 
-  private _converToMoveStr(ax: number, ay: number, bx: number, by: number) {
+  private _convertToMoveStr(ax: number, ay: number, bx: number, by: number) {
     const a = String.fromCharCode(97 + ax);
     const b = Number(ay);
     const c = String.fromCharCode(97 + bx);
@@ -91,19 +98,51 @@ class Player extends EventEmitter {
     return move;
   }
 
+  private _convertToMoveObject(moveStr: string) {
+    const sp = moveStr.split('');
+    const move = {
+      ax: -1,
+      ay: -1,
+      bx: -1,
+      by: -1
+    };
+    move.ax = sp[0].charCodeAt(0) - 97;
+    move.ay = Number(sp[1]);
+    move.bx = sp[2].charCodeAt(0) - 97;
+    move.by = Number(sp[3]);
+    return move;
+  }
+
   private go() {
     let postion = 'position startpos';
     if (this.moves.length) {
       postion += ' moves ' + this.moves.join(' ');
+    }
+    if (this.isBlackChess) {
+      postion += ' w';
     }
     console.log(postion);
     this.engine.command(postion);
     this.engine.command('go depth 10');
   }
 
-  private _onEngineInfoMove(depth: number, move: string) {
+  private _onEngineInfoMove(depth: number, moves: string) {
+    if (!moves.length) {
+      return;
+    }
+
+    const move = this._convertToMoveObject(moves[0]);
+
+    if (this.isBlackChess) {
+      let { ax, ay, bx, by } = move;
+      move.ay = 9 - Number(ay);
+      move.by = 9 - Number(by);
+      move.ax = 8 - Number(ax);
+      move.bx = 8 - Number(bx);
+    }
+
     this.send('infomove', {
-      depth,
+      depth: Number(depth),
       move
     })
   }

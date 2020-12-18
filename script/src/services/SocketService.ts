@@ -5,8 +5,12 @@ export interface IData {
   data?: Object;
 }
 
+export interface IMoveInfo {
+  depth: number, move: {ax: number, ay: number, bx: number, by: number}
+}
+
 export declare interface SocketService {
-  on(event: 'infomove', listener: () => void): this;
+  on(event: 'infomove', listener: (data: IMoveInfo) => void): this;
 }
 
 

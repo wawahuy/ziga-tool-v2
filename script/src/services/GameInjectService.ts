@@ -98,10 +98,17 @@ export default class GameInjectService {
 
   indexToPoint(index: {col: number; row: number}): IPoint {
     const x = this.gameLayer.getPosX(index.col);
-    const y = this.gameLayer.getPosX(index.row);
+    const y = this.gameLayer.getPosY(index.row);
     return { x, y };
   }
 
+  addChild(node: any) {
+    this.gameLayer.addChild(node);
+  }
+
+  removeChild(node: any) {
+    this.gameLayer.removeChild(node);
+  }
 
   /**
    * ********************
