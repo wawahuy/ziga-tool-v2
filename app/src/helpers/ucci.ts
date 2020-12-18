@@ -10,7 +10,8 @@ export interface IUCCIConfig {
 
 export enum EUCCIOption {
   Hash = 'Hash',
-  Threads = 'Threads'
+  Threads = 'Threads',
+  Contempt = 'Contempt'
 }
 
 const defaultOptions: IUCCIConfig = {

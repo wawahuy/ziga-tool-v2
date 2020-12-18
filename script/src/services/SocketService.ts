@@ -62,6 +62,13 @@ export class SocketService extends EventEmitter {
     })
   }
 
+  startCotuong(isChessBlack: boolean) {
+    this.send({
+      name: 'startcotuong',
+      data: isChessBlack
+    })
+  }
+
   closeCotuong() {
     this.send({
       name: 'closecotuong'

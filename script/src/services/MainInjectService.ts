@@ -50,9 +50,6 @@ export class MainInjectService extends EventEmitter implements MainInjectAction 
   constructor() {
     super();
     this.elementCanvas = document.getElementById('Cocos2dGameContainer')?.getElementsByTagName('canvas')[0];
-    // if (this.elementCanvas) {
-    //   this.elementCanvas.onmousemove = this.touchMoveListener.bind(this);
-    // }
     this.socketMain = SocketService.instance();
     this.socketInject = new SocketInjectService;
     this.socketInject.on('join', this.joinListener.bind(this));
@@ -70,13 +67,14 @@ export class MainInjectService extends EventEmitter implements MainInjectAction 
     if (typeGame == EGameType.CO_TUONG) {
       console.log('open cot uong');
       setTimeout(() => {
-        this.socketMain.openCotuong();
         this.ponder = false;
         this.gameInject = new GameInjectService;
         this.gameInject.injectSelectListener(this.selectListener.bind(this));
         this.gameInject.injectTouchUpListener(this.touchUpListener.bind(this));
         this.gameInject.injectPieceMoveListener(this.pieceMoveListener.bind(this));
+        this.gameInject.injectStartGameListener(this.startListener.bind(this));
         this.initMenu();
+        this.socketMain.openCotuong();
       }, 1000);
     }
   }
@@ -84,6 +82,14 @@ export class MainInjectService extends EventEmitter implements MainInjectAction 
   private outListener() {
     console.log('out cot uong');
     this.socketMain.closeCotuong();
+  }
+
+  private startListener() {
+    setTimeout(() => {
+      console.log('start cot uong');
+      this.socketMain.startCotuong(this.gameInject.isChessBlack);
+    }, 1000);
+    return true;
   }
 
   private selectListener(indexChess: number) {

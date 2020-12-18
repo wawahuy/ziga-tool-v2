@@ -139,7 +139,7 @@ export default class GameInjectService {
     this.gameLayer.touchUpHandle = injectTouchListener;
   }
 
-  injectStartGameListener(callback: (...args: any[]) => true) {
+  injectStartGameListener(callback: (...args: any[]) => boolean) {
     const injectListener = (...args: any[]) => {
       if (callback(...args)) {
         this.snapshotBaseDealCard.call(this.gameLayer, ...args);
