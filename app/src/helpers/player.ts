@@ -123,7 +123,7 @@ class Player extends EventEmitter {
     }
     console.log(postion);
     this.engine.command(postion);
-    this.engine.command('go depth 10');
+    this.engine.command('go depth 15');
   }
 
   private _onEngineInfoMove(depth: number, moves: string) {

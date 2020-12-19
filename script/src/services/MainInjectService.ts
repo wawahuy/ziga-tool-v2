@@ -4,7 +4,9 @@ import { IMoveInfo, SocketService } from './SocketService';
 import { EGameType, SocketInjectService } from './SocketInjectService';
 import * as _ from 'lodash';
 import { CCColor } from '../helpers/CCColor';
-import CCLine from '../helpers/CCLine';
+import { IDraw } from '../helpers/IDraw';
+import CCDirectorPiece from '../helpers/CCDirectorPiece';
+import { node } from 'webpack';
 
 SocketService.instance()
 
@@ -49,7 +51,7 @@ export class MainInjectService extends EventEmitter implements MainInjectAction 
   ponder: boolean = false;
   ponderTarget!: IPoint;
 
-  nodeDraw: any[] = [];
+  nodeDraw: IDraw[] = [];
 
   constructor() {
     super();
@@ -121,18 +123,30 @@ export class MainInjectService extends EventEmitter implements MainInjectAction 
     // this.gameInject.gameLayer.isReverse && ((ay = 9 - ay), (by = 9 - by), (ax = 8 - ax), (bx = 8 - bx));
     console.log('test move', ax, ay, bx, by);
     this.socketMain.moveCotuong([ax, ay, bx, by]);
-    this.nodeDraw.map(node => this.gameInject.removeChild(node));
+    this.nodeDraw.map(node => node.remove(this.gameInject));
     return true;
   }
 
   private onEngineInfoMove(data: IMoveInfo) {
     const start = this.gameInject.indexToPoint({ col: data.move.ax, row: data.move.ay });
     const end = this.gameInject.indexToPoint({ col: data.move.bx, row: data.move.by });
-    const line = new CCLine();
-    const color = CCColor(255, 255, 255, 255);
-    line.set(start.x, start.y, end.x, end.y, 2, color);
-    this.gameInject.addChild(line.node);
-    this.nodeDraw.push(line.node);
+
+    const moveCurrent = this.nodeDraw.find(node => {
+      if (node instanceof CCDirectorPiece) {
+        return node.isEquals(start.x, start.y, end.x, end.y);
+      }
+      return false;
+    });
+
+    if (moveCurrent) {
+      (moveCurrent as CCDirectorPiece).setDepth(data.depth);
+      console.log('re set depth', data.depth);
+    } else {
+      const dir = new CCDirectorPiece(start.x, start.y, end.x, end.y, data.depth);
+      dir.add(this.gameInject);
+      this.nodeDraw.push(dir);
+      console.log('set new nodedraw', data);
+    }
   }
 
   computeRealY(y: number) {
