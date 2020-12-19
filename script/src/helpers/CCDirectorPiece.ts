@@ -7,22 +7,18 @@ import CCText from './CCText';
 
 const colors = [
   '#E52B50',
-  '#FFBF00',
-  '#9966CC',
-  '#FBCEB1',
-  '#7FFFD4',
-  '#007FFF',
-  '#89CFF0',
-  '#CB4154',
-  '#8A2BE2',
-  '#DE5D83',
-  '#964B00',
-  '#6F4E37',
+  '#000000',
+  '#003153',
+  '#4B0082',
+  '#FF6600',
+  '#808000',
+  '#800000'
 ]
 
 class CCDirectorPiece implements IDraw {
   node: any;
   nodeDepth: CCText;
+  nodeLine: CCNode;
   _node: IDraw[] = [];
   static globalPosColor = 0;
 
@@ -34,24 +30,50 @@ class CCDirectorPiece implements IDraw {
     by?: number;
   } = {};
 
-  constructor(ax: number, ay: number, bx: number, by: number, depth: number) {
+  constructor(ax: number, ay: number, bx: number, by: number, depth: number, lw = 4) {
     const color = this.getColor();
-    const line = new CCNode;
-    line.drawLine(ax, ay, bx, by, 3, color),
-    this._node.push(line);
 
     const circle = new CCNode;
-    circle.drawSolidCircle(bx, by, 30, color);
+    circle.drawCircle(bx, by, 30, lw, color);
     this._node.push(circle);
 
-    this.nodeDepth = new CCText;
-    this.nodeDepth.setText(depth.toString());
-    this.nodeDepth.setPosition(bx - 10, by + 10);
-    this.nodeDepth.setColor(color);
-    this.nodeDepth.setZOrder(1000000);
-    this._node.push(this.nodeDepth);
+    bx += bx > ax ? -30 : bx < ax ? 30 : 0;
+    by += by > ay ? -30 : by < ay ? 30 : 0;
+    const line = new CCNode;
+    let xc1 = 0, yc1 = 0, xc2 = 0, yc2 = 0;
+    let dirLine = _.random(0, 1) ? -1 : 1;
+    if (ax - bx === 0) {
+      xc1 = ax + dirLine*_.random(10, 100);
+      yc1 = ay;
+      xc2 = bx + dirLine*_.random(10, 100);
+      yc2 = by;
+    } else if (ay - by === 0) {
+      yc1 = ay + dirLine*_.random(10, 100);
+      xc1 = ax;
+      yc2 = by + dirLine*_.random(10, 100);
+      xc2 = bx;
+    } else  {
+      xc1 = _.random(ax, ax + dirLine*(bx - ax)*0.25);
+      yc1 = _.random(ay, ay + dirLine*(by - ay)*0.25);
+      xc2 = _.random(ax, bx - dirLine*(bx - ax)*0.25);
+      yc2 = _.random(ay, by - dirLine*(by - ay)*0.25);
+    }
+    line.drawCubicLine(ax, ay, xc1, yc1, xc2, yc2, bx, by, lw, color),
+    line.setZOrder(1000);
+    this.nodeLine = line;
+    this._node.push(line);
 
-    this._move = {ax, ay, bx, by};
+    const solidCircle = new CCNode;
+    solidCircle.drawSolidCircle(bx, by, depth == -1 ? 16 : 12, color);
+    solidCircle.setZOrder(9999);
+    this._node.push(solidCircle);
+
+    this.nodeDepth = new CCText;
+    this.nodeDepth.setText(depth == -1 ? 'Max' : depth.toString());
+    this.nodeDepth.setPosition(bx, by);
+    this.nodeDepth.setColor(CCColorHex('#FFFFFF'));
+    this.nodeDepth.setZOrder(10000);
+    this._node.push(this.nodeDepth);
     this._depth = depth;
   }
 
@@ -72,6 +94,11 @@ class CCDirectorPiece implements IDraw {
 
   isEquals(ax: number, ay: number, bx: number, by: number) {
     return _.isEqual({ax, ay, bx, by}, this._move);
+  }
+
+  setUserData(ax: number, ay: number, bx: number, by: number) {
+    this._move = {ax, ay, bx, by};
+
   }
 
   setDepth(depth: number) {

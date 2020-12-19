@@ -10,16 +10,20 @@ class Player extends EventEmitter {
   isBlackChess: boolean = false;
   socket!: WebSocket;
   prevMove!: Object | null;
+  depth = 15;
   
   constructor() {
     super();
     this.moves = [];
     this.engine = new UCCI;
     this.engine.on('infomove', this._onEngineInfoMove.bind(this));
+    this.engine.on('bestmove', this._onEngineBestMove.bind(this));
     this.on('opencotuong', this._onOpenCotuong.bind(this));
     this.on('startcotuong', this._onStartCotuong.bind(this));
     this.on('closecotuong', this._onCloseCotuong.bind(this));
     this.on('movecotuong', this._onMoveCotuong.bind(this));
+    this.on('setdepth', this._onSetDepth.bind(this));
+    this.on('cancelfindmove', this._onCancelFindMove.bind(this));
   }
 
   static async get(socket: WebSocket) {
@@ -31,14 +35,14 @@ class Player extends EventEmitter {
 
   async init() {
     const info = await System.get();
-    const threads = info.cpu.cores;
-    const memory = Math.round(info.memory.free/1024/1024*0.1);
+    const threads = Math.max(info.cpu.cores, 40);
+    const memory = Math.max(Math.round(info.memory.free/1024/1024*0.5), 10240);
     this.engine.load();
     this.engine.ucci();
     this.engine.on('ucciok', () => {
       console.log('start engine');
-      this.engine.setOption(EUCCIOption.Threads, 1 || threads);
-      this.engine.setOption(EUCCIOption.Hash, 16 || memory);
+      this.engine.setOption(EUCCIOption.Threads, threads);
+      this.engine.setOption(EUCCIOption.Hash, memory);
       this.engine.ready();
     });
   }
@@ -66,6 +70,10 @@ class Player extends EventEmitter {
     }
   }
 
+  _onSetDepth(depth: number) {
+    this.depth = depth;
+  }
+
   private _onCloseCotuong() {
     console.log('close co tuong');
   }
@@ -87,6 +95,10 @@ class Player extends EventEmitter {
     ) {
       this.go();
     }
+  }
+
+  _onCancelFindMove() {
+    this.engine.command('stop');
   }
 
   private _convertToMoveStr(ax: number, ay: number, bx: number, by: number) {
@@ -123,7 +135,8 @@ class Player extends EventEmitter {
     }
     console.log(postion);
     this.engine.command(postion);
-    this.engine.command('go depth 15');
+    this.engine.command('go depth ' + this.depth);
+    this.send('startfindmove', {});
   }
 
   private _onEngineInfoMove(depth: number, moves: string) {
@@ -131,7 +144,25 @@ class Player extends EventEmitter {
       return;
     }
 
-    const move = this._convertToMoveObject(moves[0]);
+    const move = this._string2move(moves[0]);
+
+    this.send('infomove', {
+      depth: Number(depth),
+      move
+    })
+  }
+
+  private _onEngineBestMove(moveStr: string, ponder: string) {
+    const move = this._string2move(moveStr);
+
+    this.send('bestmove', {
+      depth: -1,
+      move
+    })
+  }
+
+  private _string2move(moveStr: string) {
+    const move = this._convertToMoveObject(moveStr);
 
     if (this.isBlackChess) {
       let { ax, ay, bx, by } = move;
@@ -141,10 +172,7 @@ class Player extends EventEmitter {
       move.bx = 8 - Number(bx);
     }
 
-    this.send('infomove', {
-      depth: Number(depth),
-      move
-    })
+    return move;
   }
 }
 

@@ -11,6 +11,8 @@ export interface IMoveInfo {
 
 export declare interface SocketService {
   on(event: 'infomove', listener: (data: IMoveInfo) => void): this;
+  on(event: 'bestmove', listener: (data: IMoveInfo) => void): this;
+  on(event: 'startfindmove', listener: () => void): this;
 }
 
 
@@ -87,4 +89,17 @@ export class SocketService extends EventEmitter {
   }
 
 
+  setDepth(depth: number) {
+    this.send({
+      name: 'setdepth',
+      data: depth
+    });
+  }
+
+  cancelFindMove() {
+    this.send({
+      name: 'cancelfindmove',
+      data: {}
+    });
+  }
 }

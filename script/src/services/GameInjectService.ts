@@ -73,6 +73,11 @@ export default class GameInjectService {
     return this.listPieces[index];
   }
 
+  move(f: number, h: number, g: number, k: number) {
+    this.isChessBlack && ((h = 9 - h), (k = 9 - k), (f = 8 - f), (g = 8 - g));
+    this.logic.processMovePiece(f, h, g, k);
+  }
+
   get myClientState(): IClientState {
     return this.logic.getMyClientState();
   }
@@ -80,6 +85,7 @@ export default class GameInjectService {
   get isChessBlack(): boolean {
     return this.gameLayer.isReverse;
   }
+
 
   /**
    * Chess Index to Point

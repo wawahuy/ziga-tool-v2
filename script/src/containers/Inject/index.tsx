@@ -1,20 +1,31 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { IPiece } from '../../services/GameInjectService';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import GameInjectService, { IPiece } from '../../services/GameInjectService';
 import {EMainInjectEvent, EMenu, INumKeyPair, MainInjectService} from '../../services/MainInjectService';
-import { Button, Slider, Switch } from 'antd';
+import { Button, Slider, Switch, message } from 'antd';
 import { SecurityScanOutlined, CloseOutlined } from '@ant-design/icons';
 import styles from './index.styles.scss';
+import { MessageType } from 'antd/lib/message';
 
 export default function Inject() {
   const mainInjectService = useRef<MainInjectService>();
+  const messageRef = useRef<MessageType>();
   const [menu, setMenu] = useState<INumKeyPair>({});
   const [pieceSelect, setPieceSelect] = useState<IPiece | null>();
   const [ponderPiece, setPonderPiece] = useState<boolean>();
+  const [visible, setVisible] = useState(false);
+  const [visibleBtnC, setVisibleBtnC] = useState(false);
+
 
   useEffect(() => {
     mainInjectService.current = new MainInjectService();
+    mainInjectService.current.on(EMainInjectEvent.SHOW_MENU, () => {
+      setVisible(true);
+    });
+    mainInjectService.current.on(EMainInjectEvent.HIDE_MENU, () => {
+      setVisible(false);
+    });
     mainInjectService.current.on(EMainInjectEvent.SHOW_OPTION_PIECE, (piece: IPiece) => {
-      setPieceSelect(piece);
+      // setPieceSelect(piece);
     });
     mainInjectService.current.on(EMainInjectEvent.REMOVE_ALL_DRAW, () => {
       setPieceSelect(null);
@@ -22,6 +33,17 @@ export default function Inject() {
     });
     mainInjectService.current.on(EMainInjectEvent.DRAW_MENU, (menu: INumKeyPair) => {
       setMenu({...menu});
+    });
+    mainInjectService.current.on(EMainInjectEvent.FIND_MOVE_START, () => {
+      messageRef.current = message.loading('Tìm nước đi...', 0);
+      setVisibleBtnC(true);
+    });
+    mainInjectService.current.on(EMainInjectEvent.FIND_MOVE_END, () => {
+      messageRef.current?.();
+      setVisibleBtnC(false);
+    });
+    mainInjectService.current.on(EMainInjectEvent.MESS_NO_SELECT, () => {
+      message.error('Đang tìm nước đi!');
     });
   }, [])
 
@@ -35,6 +57,7 @@ export default function Inject() {
   }
 
   return (
+    visible &&
     <div className={styles.injectCnt}>
     {
       pieceSelect &&
@@ -72,17 +95,16 @@ export default function Inject() {
       <section className={styles.injectMenu}>
         <Switch
           className={styles.item}
-          unCheckedChildren="Tắt Auto"
-          checkedChildren="Bật Auto"
+          unCheckedChildren="Đã tắt Auto"
+          checkedChildren="Đã bật Auto"
           checked={menu[EMenu.AUTO]}
           onChange={mainInjectService.current?.hocSetMenu(EMenu.AUTO)}
           />
 
         <Switch
           className={styles.item}
-          disabled={menu[EMenu.AUTO]}
-          unCheckedChildren="Tắt tìm nước đi tốt"
-          checkedChildren="Bật tìm nước đi tốt"
+          unCheckedChildren="Đã hiện all move"
+          checkedChildren="Đã ẩn all move"
           checked={menu[EMenu.FIND_BEST_MOVE]}
           onChange={mainInjectService.current?.hocSetMenu(EMenu.FIND_BEST_MOVE)}
           />
@@ -94,6 +116,17 @@ export default function Inject() {
           max={25}
           tipFormatter={(v) => "Depth: " + v}
           onChange={mainInjectService.current?.hocSetMenu(EMenu.DEPTH)} />
+
+
+
+        {
+          visibleBtnC &&
+          <Button
+            onClick={() => mainInjectService.current?.cacelFindMove()}
+            className={styles.cntCancel}>
+              Hủy tìm moves
+          </Button>
+        }
       </section>
     </div>
   )
