@@ -24,6 +24,6 @@ cp -r ./script/dist ./release/release_server/assets
 git add .
 git commit -m "release server"
 git push origin main
-# git subtree push --prefix=release/release_server origin release_server
+git subtree push --prefix=release/release_server origin release_server
 
 read -r -p "Press enter to continue"
