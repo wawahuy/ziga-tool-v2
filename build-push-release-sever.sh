@@ -15,6 +15,7 @@ mkdir -p release
 rm -rf ./release/release_server || true
 mkdir -p ./release/release_server
 
+cp -r ./server/package.json ./release/release_server/package.json
 cp -r ./server/deploy/* ./release/release_server
 cp -r ./server/dist/* ./release/release_server
 cp -r ./script/dist ./release/release_server/assets
