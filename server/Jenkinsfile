@@ -16,6 +16,7 @@ pipeline {
       steps {
         dir("server") {
           sh "ls"
+          sh "chmod u+x ./build-prod.sh"
           sh "./build-prod.sh"
         }
         // sh "docker rmi ${DOCKER_IMAGE}:build || true"
