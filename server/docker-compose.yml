@@ -1,0 +1,25 @@
+version: "3.7"
+services:
+  app:
+    image: ziga/ziga_tool_v2:lasted
+    user: "1003:983"
+    ports:
+      - "9900:9900"
+    restart: always
+    build: .
+    links:
+      - redis
+      - mongodb
+
+  mongodb:
+    image: mongo:4.2
+    user: "1003:983"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ziga
+      MONGO_INITDB_ROOT_PASSWORD: Ziga2ti!
+    command: ["--bind_ip", "0.0.0.0"]
+    ports:
+      - "9901:27017"
+    volumes:
+      - ".docker/data/mongodb:/data/db"
+    restart: always
