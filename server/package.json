@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "env-cmd -f ../env/dev.env nodemon",
-    "clean": "rimraf ./dist",
-    "build": "tsc",
+    "build": "rimraf ./dist && tsc",
     "prod": "env-cmd -f ../env/prod.env node ./dist/index.js",
     "prod-dev": "env-cmd -f ../env/dev.env node ./dist/index.js"
   },
