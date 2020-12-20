@@ -1,11 +1,15 @@
 import express from 'express';
-import { log } from '../helpers/common';
+import { isProduction, log } from '../helpers/common';
 import request from 'request';
 const router = express.Router();
 
 router.get('*', (req, res) => {
+  let host = process.env.SERVER_URL + '/inject';
+  if (!isProduction()) {
+    host = process.env.INJECT_PUBLIC_URL as string;
+  }
   const path = req.url;
-  const url = process.env.SERVER_URL + '/inject' + path;
+  const url = host + path;
   const getContent = request(url, function (error, response, body) {
     if (error) {
       log(error);
