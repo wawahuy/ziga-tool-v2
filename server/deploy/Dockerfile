@@ -10,4 +10,4 @@ COPY . .
 
 EXPOSE 9900
 
-CMD "npm" "run" "prod"
+CMD "npm" "run" "prod-vps"
