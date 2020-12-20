@@ -7,7 +7,7 @@
     "dev": "env-cmd -f ../env/dev.env nodemon",
     "build": "rimraf ./dist && tsc",
     "prod": "env-cmd -f ../env/prod.env node ./dist/index.js",
-    "prod-vps": "env-cmd -f ./.env node ./dist/index.js",
+    "prod-vps": "env-cmd -f ./.env node ./index.js",
     "prod-dev": "env-cmd -f ../env/dev.env node ./dist/index.js"
   },
   "pkg": {
