@@ -15,6 +15,7 @@ mkdir -p release
 rm -rf ./release/release_server || true
 mkdir -p ./release/release_server
 
+cp -r ./env/prod.env ./release/release_server/.env
 cp -r ./server/package.json ./release/release_server/package.json
 cp -r ./server/deploy/* ./release/release_server
 cp -r ./server/dist/* ./release/release_server
@@ -23,6 +24,6 @@ cp -r ./script/dist ./release/release_server/assets
 git add .
 git commit -m "release server"
 git push origin main
-git subtree push --prefix=release/release_server origin release_server
+# git subtree push --prefix=release/release_server origin release_server
 
 read -r -p "Press enter to continue"
