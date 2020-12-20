@@ -28,3 +28,9 @@
 ## Build
   - build app vào ./app/build-xxx.sh để xây dựng
   - build server xem cấu hình jenkins và docker
+
+### Release Server
+- Bao gồm các min file của 2 dự án script & server
+
+### Release App
+- Chứa file bin có khả năng run trên windows được build từ dự án app
