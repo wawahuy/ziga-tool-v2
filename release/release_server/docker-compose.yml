@@ -8,7 +8,6 @@ services:
     restart: always
     build: .
     links:
-      - redis
       - mongodb
 
   mongodb:
