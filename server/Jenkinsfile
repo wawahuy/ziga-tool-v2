@@ -14,9 +14,10 @@ pipeline {
         DOCKER_TAG="${GIT_BRANCH.tokenize('/').pop()}-${GIT_COMMIT.substring(0,7)}"
       }
       steps {
-        sh "cd server"
-        sh "ls"
-        sh "./build-prod.sh"
+        dir("server") {
+          sh "ls"
+          sh "./build-prod.sh"
+        }
         // sh "docker rmi ${DOCKER_IMAGE}:build || true"
         // sh "docker build -t ${DOCKER_IMAGE}:build ."
       }
