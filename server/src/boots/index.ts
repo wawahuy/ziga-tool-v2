@@ -7,10 +7,10 @@ import wss from './socket';
 const server = http.createServer(expressApp);
 
 server.listen(
-  (process.env.APP_PORT || -1) as number,
+  (process.env.SERVER_PORT || -1) as number,
   "0.0.0.0",
   () => {
-    log("Express listening...", process.env.APP_PORT)
+    log("Express listening...", process.env.SERVER_PORT)
   }
 )
 

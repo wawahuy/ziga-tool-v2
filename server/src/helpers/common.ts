@@ -8,13 +8,6 @@ export function isApp() {
   return process.env.IS_APP === "app";
 }
 
-export function pathEngineUCCI() {
-  if (isApp()) {
-    return path.join(process.cwd(), 'ucci.exe');
-  }
-  return path.join(__dirname, '../../bin/ucci.exe');
-}
-
 export function log(...args: any[]) {
   if (!isProduction()) {
     console.log(...args);

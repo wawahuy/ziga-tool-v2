@@ -3,6 +3,7 @@ import WebSocket from 'ws';
 import { EUCCIOption, UCCI } from './ucci';
 import System from './system';
 import * as _ from 'lodash';
+import { log } from './common';
 
 class Player extends EventEmitter {
   engine!: UCCI;
@@ -35,12 +36,12 @@ class Player extends EventEmitter {
 
   async init() {
     const info = await System.get();
-    const threads = Math.max(info.cpu.cores, 40);
-    const memory = Math.max(Math.round(info.memory.free/1024/1024*0.5), 10240);
+    const threads = Math.min(info.cpu.cores, 8);
+    const memory = Math.min(Math.round(info.memory.free/1024/1024*0.5), 1512);
     this.engine.load();
     this.engine.ucci();
     this.engine.on('ucciok', () => {
-      console.log('start engine');
+      log('start engine');
       this.engine.setOption(EUCCIOption.Threads, threads);
       this.engine.setOption(EUCCIOption.Hash, memory);
       this.engine.ready();
@@ -48,7 +49,7 @@ class Player extends EventEmitter {
   }
 
   close() {
-    console.log('quit engine');
+    log('quit engine');
     this.engine.quit();
   }
 
@@ -57,11 +58,11 @@ class Player extends EventEmitter {
   }
 
   private _onOpenCotuong() {
-    console.log('open cotuong');
+    log('open cotuong');
   }
 
   private _onStartCotuong(isBlack: boolean) {
-    console.log('start cotuong, black=', isBlack);
+    log('start cotuong, black=', isBlack);
     this.isBlackChess = isBlack;
     this.prevMove = null;
     this.moves = [];
@@ -75,7 +76,7 @@ class Player extends EventEmitter {
   }
 
   private _onCloseCotuong() {
-    console.log('close co tuong');
+    log('close co tuong');
   }
 
   private _onMoveCotuong(args: number[]) {
@@ -87,7 +88,7 @@ class Player extends EventEmitter {
     const move = this._convertToMoveStr(ax, ay, bx, by);
     this.moves.push(move);
 
-    console.log('move cotuong', args, move);
+    log('move cotuong', args, move);
     const size = this.moves.length;
     if (
       (this.isBlackChess && size % 2 !== 0) ||
@@ -133,7 +134,7 @@ class Player extends EventEmitter {
     if (this.isBlackChess) {
       postion += ' w';
     }
-    console.log(postion);
+    log(postion);
     this.engine.command(postion);
     this.engine.command('go depth ' + this.depth);
     this.send('startfindmove', {});

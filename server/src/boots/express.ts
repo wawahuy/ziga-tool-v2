@@ -1,7 +1,7 @@
 import Express from 'express';
-import routerInject from '../routes/inject';
 import { isProduction } from '../helpers/common';
+import routeInject from '../routes/inject';
 
 const expressApp = Express();
-expressApp.use('/inject', routerInject);
+expressApp.use('/inject', routeInject);
 export default expressApp;
