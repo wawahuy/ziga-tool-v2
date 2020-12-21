@@ -36,8 +36,8 @@ class Player extends EventEmitter {
 
   async init() {
     const info = await System.get();
-    const threads = Math.min(info.cpu.cores, 8);
-    const memory = Math.min(Math.round(info.memory.free/1024/1024*0.5), 1512);
+    const threads = Math.min(info.cpu.cores, 1);
+    const memory = Math.min(Math.round(info.memory.free/1024/1024*0.5), 16);
     this.engine.load();
     this.engine.ucci();
     this.engine.on('ucciok', () => {

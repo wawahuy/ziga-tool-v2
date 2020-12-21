@@ -14,13 +14,46 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const common_1 = require("../helpers/common");
 const ws_1 = __importDefault(require("ws"));
+const moment_1 = __importDefault(require("moment"));
+const store_1 = require("../helpers/store");
 const wss = new ws_1.default.Server({ noServer: true });
 wss.on('connection', (socket) => __awaiter(void 0, void 0, void 0, function* () {
+    let token = null;
+    let emit = (name, data) => {
+        socket.send(JSON.stringify({ name, data }));
+    };
+    emit('version', process.env.VERSION_APP);
     socket.on('message', (dataChunk) => {
         try {
             const d = JSON.parse(dataChunk.toString('utf-8'));
             const name = d.name;
             const data = d.data;
+            switch (name) {
+                case 'auth':
+                    const rp = {};
+                    if (data == 'test') {
+                        if (store_1.tokenOpening.find(d => d.token == data)) {
+                            rp.status = false;
+                            rp.message = 'Token này đang được sử dụng ở máy khác!';
+                        }
+                        else {
+                            token = data;
+                            rp.status = true;
+                            rp.currentDate = moment_1.default().toISOString();
+                            rp.expireDate = moment_1.default().add(1, 'hours').toISOString();
+                            store_1.tokenOpening.push({
+                                token: data,
+                                client: socket
+                            });
+                        }
+                    }
+                    else {
+                        rp.status = false;
+                        rp.message = 'Token không chính xác!';
+                    }
+                    emit('auth', rp);
+                    break;
+            }
             common_1.log(d);
         }
         catch (e) {
@@ -28,8 +61,12 @@ wss.on('connection', (socket) => __awaiter(void 0, void 0, void 0, function* () 
         }
     });
     socket.on('close', () => {
+        store_1.remove(socket);
+        console.log(store_1.tokenOpening);
     });
     socket.on('error', () => {
+        store_1.remove(socket);
+        console.log(store_1.tokenOpening);
     });
 }));
 exports.default = wss;

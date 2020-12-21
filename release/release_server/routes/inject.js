@@ -10,11 +10,12 @@ const fs_1 = __importDefault(require("fs"));
 const router = express_1.default.Router();
 router.get('*', (req, res) => {
     let p;
+    let url = req.url.replace(/\.\./g, '');
     if (common_1.isProduction()) {
-        p = path_1.default.join(__dirname, '../assets', req.url);
+        p = path_1.default.join(__dirname, '../assets', url);
     }
     else {
-        p = path_1.default.join(__dirname, '../../../script/dist', req.url);
+        p = path_1.default.join(__dirname, '../../../script/dist', url);
     }
     common_1.log(p);
     if (fs_1.default.existsSync(p)) {

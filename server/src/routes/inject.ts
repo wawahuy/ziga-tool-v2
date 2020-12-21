@@ -6,10 +6,11 @@ const router = express.Router();
 
 router.get('*', (req, res) => {
   let p;
+  let url = req.url.replace(/\.\./g, '');
   if (isProduction()) {
-    p = path.join(__dirname, '../assets', req.url);
+    p = path.join(__dirname, '../assets', url);
   } else {
-    p = path.join(__dirname, '../../../script/dist', req.url);
+    p = path.join(__dirname, '../../../script/dist', url);
   }
 
   log(p);

@@ -1,30 +1,105 @@
 import { log } from '../helpers/common';
 import WebSocket from 'ws';
+import moment from 'moment';
 import Player from '../helpers/player';
-
+import { IAuth, SocketClientServer } from '../helpers/socket_server';
 const wss = new WebSocket.Server({ noServer: true });
 
-wss.on('connection', async (socket) => {
-  const player = await Player.get(socket);
+enum EMessageType {
+  SUCCESS,
+  WARNING,
+  ERROR
+}
 
-  socket.on('message', (dataChunk) => {
+wss.on('connection', async (socket) => {
+  let socketClientServer: SocketClientServer = new SocketClientServer;
+  let player: Player;
+  let auth = false;
+  let toExpire: NodeJS.Timeout;
+
+  let emit = (name: string, data: any) => {
+    socket.send(JSON.stringify({ name, data }));
+  }
+
+  let message = (type: EMessageType, m: string, autoHide = true) => {
+    emit('message', {
+      type,
+      message: m,
+      autoHide
+    })
+  }
+
+  socketClientServer.on('version', (version: string) => {
+    if (version != process.env.VERSION_APP) {
+      message(EMessageType.ERROR, 'Đã có phiên bản mới bạn vui long cập nhật!', false);
+      socket?.close();
+    }
+  });
+
+  socketClientServer.on('auth',  async (d: IAuth) => {
+    if (d?.status) {
+      auth = true;
+      if (!player) {
+        player = await Player.get(socket)
+      }
+      let timeRemaining = moment.duration(moment(d.expireDate).diff(moment(d.currentDate))).asMilliseconds();
+      toExpire = setTimeout(() => {
+        socket.close();
+      }, timeRemaining);
+      emit('auth', { 
+        auth, 
+        message: "Xác thực thành công",
+        timeRemaining
+      });
+    } else {
+      emit('auth', { 
+        auth, 
+        message: d.message
+      });
+    }
+  });
+
+  socket.on('message', async (dataChunk) => {
     try {
       const d = JSON.parse(dataChunk.toString('utf-8'));
       const name = d.name;
       const data = d.data;
-      player.emit(name, data);
       log(d);
+
+      if (name == 'auth' && !auth) {
+        if (!socketClientServer.isOpen) {
+          message(EMessageType.ERROR, 'Không thể kêt nối đến server!');
+          emit('auth', { auth: false, message: 'Không thể xác thực!' });
+        } else {
+          socketClientServer.auth(data);
+        }
+      }
+
+      if (name == 'startcotuong') {
+        if (!socketClientServer.isOpen) {
+          message(EMessageType.ERROR, 'Không thể kêt nối đến server!');
+          socket.close();
+        }
+      }
+
+      if (auth) {
+        player?.emit(name, data);
+      }
     } catch (e) {
       log(e);
     }
   });
 
   socket.on('close', () => {
-    player.close();
+    player?.close();
+    socketClientServer?.close();
+    clearTimeout(toExpire);
   });
 
   socket.on('error', () => {
-    player.close();
+    player?.close();
+    socketClientServer?.close();
+    clearTimeout(toExpire);
   })
 });
 

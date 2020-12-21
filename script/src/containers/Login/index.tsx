@@ -3,6 +3,8 @@ import { Button, Checkbox, Input, List, Popover, message } from 'antd';
 import { LockOutlined, SendOutlined, ShoppingCartOutlined, ShoppingOutlined  } from '@ant-design/icons';
 import styles from './style.scss';
 import logo from '../../assets/logo-white.png';
+import { IAuth, SocketService } from '../../services/SocketService';
+import { IContext } from '../../context';
 
 const packBuy = [
   '  1d  -   10k',
@@ -14,11 +16,10 @@ const packBuy = [
 const STORAGE_TOKEN = 'yuh_token';
 const STORAGE_CHECKED = 'yuh_token_checked';
 
-export default function Login() {
+export default function Login(props: IContext) {
   const [saveToken, setSaveToken] = useState<boolean>(localStorage.getItem(STORAGE_CHECKED) === 'true');
   const [token, setToken] = useState<string>(localStorage.getItem(STORAGE_TOKEN) || "");
   const [loading, setLoading] = useState<boolean>(false);
-
 
   const handleSubmit = () => {
     setLoading(true);
@@ -27,10 +28,18 @@ export default function Login() {
     }
     localStorage.setItem(STORAGE_CHECKED, saveToken ? 'true' : 'false');
 
-    setTimeout(() => {
-      message.error("Token không đúng!");
+    const socket = SocketService.instance();
+    socket.once('auth', (data: IAuth) => {
+      if (data.auth) {
+        message.success("Xác thực thành công!");
+      } else {
+        message.error(data.message);
+      }
       setLoading(false);
-    }, 1000);
+      props?.setTimeRemaining?.(data.timeRemaining || null);
+      props?.setAuth?.(data.auth || false);
+    });
+    socket.auth(token);
   }
 
   return (

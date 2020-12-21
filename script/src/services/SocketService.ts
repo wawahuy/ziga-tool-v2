@@ -1,3 +1,4 @@
+import { message } from 'antd';
 import { EventEmitter } from 'events';
 
 export interface IData {
@@ -5,14 +6,36 @@ export interface IData {
   data?: Object;
 }
 
+
+enum EMessageType {
+  SUCCESS,
+  WARNING,
+  ERROR
+}
+
 export interface IMoveInfo {
   depth: number, move: {ax: number, ay: number, bx: number, by: number}
+}
+
+export interface IAuth {
+  auth?: boolean;
+  message?: string;
+  timeRemaining?: number;
+}
+
+export interface IMessage {
+  type?: EMessageType;
+  message?: string;
+  autoHide: boolean
 }
 
 export declare interface SocketService {
   on(event: 'infomove', listener: (data: IMoveInfo) => void): this;
   on(event: 'bestmove', listener: (data: IMoveInfo) => void): this;
   on(event: 'startfindmove', listener: () => void): this;
+  on(event: 'auth', listener: (data: IAuth) => void): this;
+  on(event: 'message', listener: (data: IMessage) => void): this;
+  once(event: 'auth', listener: (data: IAuth) => void): this;
 }
 
 
@@ -34,7 +57,19 @@ export class SocketService extends EventEmitter {
     this.ws = new WebSocket(process.env.APP_SOCKETIO as string);
     this.ws.onopen = this.onOpen.bind(this);
     this.ws.onerror = this.onError.bind(this);
+    this.ws.onclose = this.onClose.bind(this);
     this.ws.onmessage = this.onData.bind(this);
+
+    this.on('message', (data) => {
+      const func = data.type == EMessageType.ERROR ? 'error' :
+                   data.type == EMessageType.SUCCESS ? 'success' :
+                   'warn';
+      if (data.autoHide) {
+        message[func](data.message);
+      } else {
+        message[func](data.message, 0);
+      }
+    });
   }
 
   private onOpen() {
@@ -43,6 +78,10 @@ export class SocketService extends EventEmitter {
 
   private onError() {
     console.log('socket is error');
+  }
+
+  private onClose() {
+    message.error('Bạn bị mất kết nối đến app vui lòng khởi động lại ziga', 0);
   }
 
   private onData(ev: MessageEvent) {
@@ -101,5 +140,12 @@ export class SocketService extends EventEmitter {
       name: 'cancelfindmove',
       data: {}
     });
+  }
+
+  auth(token: string) {
+    this.send({
+      name: 'auth',
+      data: token
+    })
   }
 }
