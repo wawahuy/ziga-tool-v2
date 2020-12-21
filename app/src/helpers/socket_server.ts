@@ -1,5 +1,6 @@
 import { EventEmitter } from 'events';
 import WebSocket from 'ws';
+import { log } from './common';
 
 export interface IData {
   name: string;
@@ -34,12 +35,12 @@ export class SocketClientServer extends  EventEmitter {
 
 
   private onOpen() {
-    console.log('socket is opened');
+    log('socket is opened');
     this.emit('open');
   }
 
   private onError() {
-    console.log('socket is error');
+    log('socket is error');
     this.ws = null;
   }
 
@@ -51,16 +52,16 @@ export class SocketClientServer extends  EventEmitter {
     try {
       const data = ev.data.toString();
       const json = JSON.parse(data) as IData;
-      console.log(json);
+      log(json);
       this.emit(json.name, json.data);
     } catch (e) {
-      console.log(e);
+      log(e);
     }
   }
 
   send(data: IData) {
     const dt = JSON.stringify(data);
-    console.log(data);
+    log(data);
     this.ws?.send(dt);
   }
 

@@ -3,6 +3,7 @@ import WebSocket from 'ws';
 import * as _ from 'lodash';
 import moment from 'moment';
 import { tokenOpening, remove } from '../helpers/store';
+import ModelZiga from '../models/ziga_key';
 export interface IAuth {
   status?: boolean;
   message?: string;
@@ -21,7 +22,7 @@ wss.on('connection', async (socket) => {
 
   emit('version', process.env.VERSION_APP);
 
-  socket.on('message', (dataChunk) => {
+  socket.on('message', async (dataChunk) => {
     try {
       const d = JSON.parse(dataChunk.toString('utf-8'));
       const name = d.name;
@@ -30,19 +31,33 @@ wss.on('connection', async (socket) => {
       switch (name) {
         case 'auth':
           const rp: IAuth = {};
-          if (data == 'test') {
+          const objKey = await ModelZiga.findOne({ token: data });
+
+          if (objKey) {
+            if (!objKey.startUse) {
+              console.log('start use');
+              objKey.startUse = moment().toISOString();
+              await objKey.save();
+            }
+
+            rp.currentDate = moment().toISOString();
+            rp.expireDate = moment(objKey.startUse).add(objKey.expire, 'days').toISOString();
+            let timeRemaining = moment.duration(moment(rp.expireDate).diff(moment())).asMilliseconds();
+
             if (tokenOpening.find(d => d.token == data)) {
               rp.status = false;
               rp.message = 'Token này đang được sử dụng ở máy khác!';
-            } else {
-              token = data;
+            } 
+            else if(timeRemaining > 0) {
               rp.status = true;
-              rp.currentDate = moment().toISOString();
-              rp.expireDate = moment().add(1, 'hours').toISOString();
+              token = data;
               tokenOpening.push({
                 token: data,
                 client: socket
               })
+            } else {
+              rp.status = false;
+              rp.message = 'Token này đã hết hạn sử dụng!';
             }
           } else {
             rp.status = false;

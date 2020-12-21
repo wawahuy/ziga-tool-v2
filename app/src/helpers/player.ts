@@ -3,7 +3,7 @@ import WebSocket from 'ws';
 import { EUCCIOption, UCCI } from './ucci';
 import System from './system';
 import * as _ from 'lodash';
-import { log } from './common';
+import { isProduction, log } from './common';
 
 class Player extends EventEmitter {
   engine!: UCCI;
@@ -36,8 +36,8 @@ class Player extends EventEmitter {
 
   async init() {
     const info = await System.get();
-    const threads = Math.min(info.cpu.cores, 1);
-    const memory = Math.min(Math.round(info.memory.free/1024/1024*0.5), 16);
+    const threads = Math.min(info.cpu.cores, isProduction() ? 512 : 2);
+    const memory = Math.min(Math.round(info.memory.free/1024/1024*0.5), isProduction() ? 1024 : 16);
     this.engine.load();
     this.engine.ucci();
     this.engine.on('ucciok', () => {

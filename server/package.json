@@ -24,6 +24,7 @@
     "@types/lodash": "^4.14.165",
     "@types/request": "^2.48.5",
     "@types/socket.io": "^2.1.12",
+    "@types/uuid": "^8.3.0",
     "@types/ws": "^7.4.0",
     "nodemon": "^2.0.6",
     "rimraf": "^3.0.2",
@@ -38,7 +39,9 @@
     "express": "^4.17.1",
     "lodash": "^4.17.20",
     "moment": "^2.29.1",
+    "mongoose": "^5.11.8",
     "request": "^2.88.2",
+    "uuid": "^8.3.2",
     "ws": "^7.4.1"
   }
 }
