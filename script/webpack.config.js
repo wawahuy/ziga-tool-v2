@@ -33,12 +33,12 @@ const config = (env, options) => {
 
   if (isProduction) {
     rulesTypescript.use = [
-      {
-        loader: WebpackObfuscator.loader,
-        options: {
-            rotateStringArray: true
-        }
-      },
+      // {
+      //   loader: WebpackObfuscator.loader,
+      //   options: {
+      //       rotateStringArray: true
+      //   }
+      // },
       "babel-loader"
     ]
   } else {
@@ -99,8 +99,7 @@ const config = (env, options) => {
   ].filter((a) => !!a);
 
   if (isProduction) {
-    plugins.push(new CleanTerminalPlugin());
-    plugins.push(new WebpackObfuscator(obfuscatorConfig));
+    // plugins.push(new WebpackObfuscator(obfuscatorConfig));
   } else {
     plugins.push(new HTMLWebpackPlugin({ template: path.resolve(__dirname, 'public/dev.html') }))
   }
