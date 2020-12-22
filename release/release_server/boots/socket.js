@@ -30,6 +30,9 @@ wss.on('connection', (socket) => __awaiter(void 0, void 0, void 0, function* () 
             const name = d.name;
             const data = d.data;
             switch (name) {
+                case 'ping':
+                    emit('pong', {});
+                    break;
                 case 'auth':
                     const rp = {};
                     const objKey = yield ziga_key_1.default.findOne({ token: data });

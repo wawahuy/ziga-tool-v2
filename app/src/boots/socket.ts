@@ -29,6 +29,10 @@ wss.on('connection', async (socket) => {
     })
   }
 
+  socketClientServer.on('close', () => {
+    message(EMessageType.ERROR, 'Đã bí mât kết nối đến server!', false);
+  });
+
   socketClientServer.on('version', (version: string) => {
     if (version != process.env.VERSION_APP) {
       message(EMessageType.ERROR, 'Đã có phiên bản mới bạn vui long cập nhật!', false);
@@ -79,6 +83,7 @@ wss.on('connection', async (socket) => {
         if (!socketClientServer.isOpen) {
           message(EMessageType.ERROR, 'Không thể kêt nối đến server!');
           socket.close();
+          return;
         }
       }
 

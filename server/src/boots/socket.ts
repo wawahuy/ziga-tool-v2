@@ -29,6 +29,10 @@ wss.on('connection', async (socket) => {
       const data = d.data;
 
       switch (name) {
+        case 'ping':
+          emit('pong', {});
+          break;
+
         case 'auth':
           const rp: IAuth = {};
           const objKey = await ModelZiga.findOne({ token: data });

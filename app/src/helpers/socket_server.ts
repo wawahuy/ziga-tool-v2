@@ -18,11 +18,14 @@ export interface IAuth {
 export declare interface SocketClientServer {
   on(event: 'auth', listener: (status: IAuth) => void): this;
   on(event: 'open', listener: () => void): this;
+  on(event: 'close', listener: () => void): this;
+  on(event: 'pong', listener: () => void): this;
   on(event: 'version', listener: (appVersion: string) => void): this;
 }
 
 export class SocketClientServer extends  EventEmitter {
   private ws: WebSocket | null;
+  private itPing: NodeJS.Timeout;
 
   constructor() {
     super();
@@ -31,8 +34,18 @@ export class SocketClientServer extends  EventEmitter {
     this.ws.onerror = this.onError.bind(this);
     this.ws.onclose = this.onClose.bind(this);
     this.ws.onmessage = this.onData.bind(this);
+
+    this.on('pong', this.onPong.bind(this));
+    this.itPing = setInterval(() => {
+      this.send({
+        name: 'ping'
+      })
+    }, 10000);
   }
 
+  private onPong() {
+    log('ping');
+  }
 
   private onOpen() {
     log('socket is opened');
@@ -41,11 +54,15 @@ export class SocketClientServer extends  EventEmitter {
 
   private onError() {
     log('socket is error');
+    clearInterval(this.itPing);
     this.ws = null;
+    this.emit('close');
   }
 
   private onClose() {
+    clearInterval(this.itPing);
     this.ws = null;
+    this.emit('close');
   }
 
   private onData(ev: WebSocket.MessageEvent) {
