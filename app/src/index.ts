@@ -15,3 +15,5 @@ if (fs.existsSync(pathAppENV)) {
 // boots
 import './boots';
 import './helpers/player';
+
+console.log('Vui lòng không tắt ứng dụng này khi bạn còn đang hack!');

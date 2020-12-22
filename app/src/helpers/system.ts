@@ -2,6 +2,7 @@ import systeminformation, { Systeminformation } from 'systeminformation';
 
 class System {
   cpu!: Systeminformation.CpuData;
+  cpuFlag!: string;
   memory!: Systeminformation.MemData;
 
   private constructor() {}
@@ -14,7 +15,12 @@ class System {
 
   private async _load() {
     this.cpu = await systeminformation.cpu();
+    this.cpuFlag = await systeminformation.cpuFlags();
     this.memory = await systeminformation.mem();
+  }
+
+  isSupportBMI2() {
+    return this.cpuFlag?.indexOf('bmi2') > -1;
   }
 }
 

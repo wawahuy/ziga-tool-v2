@@ -4,9 +4,19 @@ import { isProduction } from '../helpers/common';
 import routeInject from '../routes/inject';
 import { tokenOpening } from '../helpers/store';
 import ModelZiga from '../models/ziga_key';
+import ModelZigaRelease from '../models/ziga_release';
 
 const expressApp = Express();
 expressApp.use('/inject', routeInject);
+
+expressApp.get('/download', async (req, res) => {
+  const conf = await ModelZigaRelease.findOne({});
+  if (conf && conf.download) {
+    res.redirect(conf.download);
+  } else {
+    res.status(404).send("Không có version tải!");
+  }
+})
 
 /// fast build mgnt
 const mdw = function (req: Request, res: Response, next: any) {
@@ -26,6 +36,7 @@ expressApp.get('/mnt/clients', mdw,  (req, res) => {
     tokens: tokenOpening.map(o => o.token)
   });
 });
+
 
 expressApp.get('/mnt/gen', mdw, async (req, res) => {
   const date = req.query.date;
@@ -50,5 +61,19 @@ expressApp.get('/mnt/gen', mdw, async (req, res) => {
   });
 });
 
+expressApp.get('/mnt/setDown', mdw, async (req, res) => {
+  const download = req.query.download;
+
+  if (!download) {
+    res.status(404).send();
+    return;
+  }
+
+  const model = await ModelZigaRelease.findOne() || new ModelZigaRelease;
+  model.download = download as string;
+  await model.save();
+
+  res.json({ download });
+});
 
 export default expressApp;

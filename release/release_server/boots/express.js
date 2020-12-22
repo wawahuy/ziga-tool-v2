@@ -17,8 +17,18 @@ const uuid_1 = require("uuid");
 const inject_1 = __importDefault(require("../routes/inject"));
 const store_1 = require("../helpers/store");
 const ziga_key_1 = __importDefault(require("../models/ziga_key"));
+const ziga_release_1 = __importDefault(require("../models/ziga_release"));
 const expressApp = express_1.default();
 expressApp.use('/inject', inject_1.default);
+expressApp.get('/download', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const conf = yield ziga_release_1.default.findOne({});
+    if (conf && conf.download) {
+        res.redirect(conf.download);
+    }
+    else {
+        res.status(404).send("Không có version tải!");
+    }
+}));
 const mdw = function (req, res, next) {
     const l1 = req.query.l1;
     const l2 = req.query.l2;
@@ -54,6 +64,17 @@ expressApp.get('/mnt/gen', mdw, (req, res) => __awaiter(void 0, void 0, void 0, 
         phone,
         expireDate: date
     });
+}));
+expressApp.get('/mnt/setDown', mdw, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const download = req.query.download;
+    if (!download) {
+        res.status(404).send();
+        return;
+    }
+    const model = (yield ziga_release_1.default.findOne()) || new ziga_release_1.default;
+    model.download = download;
+    yield model.save();
+    res.json({ download });
 }));
 exports.default = expressApp;
 //# sourceMappingURL=express.js.map

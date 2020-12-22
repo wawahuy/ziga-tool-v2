@@ -109,7 +109,6 @@ export class MainInjectService extends EventEmitter implements MainInjectAction 
 
   private startListener() {
     setTimeout(() => {
-      console.log('start cot uong');
       this.socketMain.startCotuong(this.gameInject.isChessBlack);
     }, 1000);
     return true;

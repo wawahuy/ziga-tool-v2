@@ -24,18 +24,22 @@ export declare interface SocketClientServer {
 }
 
 export class SocketClientServer extends  EventEmitter {
-  private ws: WebSocket | null;
-  private itPing: NodeJS.Timeout;
+  private ws!: WebSocket | null;
+  private itPing!: NodeJS.Timeout;
 
   constructor() {
     super();
+    this.on('pong', this.onPong.bind(this));
+    this.connect();
+  }
+
+  connect() {
     this.ws = new WebSocket(process.env.SERVER_WS as string);
     this.ws.onopen = this.onOpen.bind(this);
     this.ws.onerror = this.onError.bind(this);
     this.ws.onclose = this.onClose.bind(this);
     this.ws.onmessage = this.onData.bind(this);
 
-    this.on('pong', this.onPong.bind(this));
     this.itPing = setInterval(() => {
       this.send({
         name: 'ping'
@@ -55,14 +59,17 @@ export class SocketClientServer extends  EventEmitter {
   private onError() {
     log('socket is error');
     clearInterval(this.itPing);
+    this.ws?.close(); 
     this.ws = null;
-    this.emit('close');
   }
 
   private onClose() {
     clearInterval(this.itPing);
     this.ws = null;
     this.emit('close');
+    setTimeout(() => {
+      this.connect();
+    }, 1000);
   }
 
   private onData(ev: WebSocket.MessageEvent) {

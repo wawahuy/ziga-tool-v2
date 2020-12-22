@@ -33,6 +33,7 @@ export declare interface SocketService {
   on(event: 'infomove', listener: (data: IMoveInfo) => void): this;
   on(event: 'bestmove', listener: (data: IMoveInfo) => void): this;
   on(event: 'startfindmove', listener: () => void): this;
+  on(event: 'startcotuong', listener: () => void): this;
   on(event: 'auth', listener: (data: IAuth) => void): this;
   on(event: 'message', listener: (data: IMessage) => void): this;
   once(event: 'auth', listener: (data: IAuth) => void): this;

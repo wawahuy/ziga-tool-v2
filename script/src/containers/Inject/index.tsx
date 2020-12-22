@@ -35,6 +35,9 @@ export default function Inject() {
       setMenu({...menu});
     });
     mainInjectService.current.on(EMainInjectEvent.FIND_MOVE_START, () => {
+      if (messageRef.current) {
+        messageRef.current?.();
+      }
       messageRef.current = message.loading('Tìm nước đi...', 0);
       setVisibleBtnC(true);
     });

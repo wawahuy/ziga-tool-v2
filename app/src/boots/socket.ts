@@ -29,13 +29,18 @@ wss.on('connection', async (socket) => {
     })
   }
 
+  socketClientServer.on('open', () => {
+    message(EMessageType.SUCCESS, 'Kết nối đến sever thành công!');
+  });
+
   socketClientServer.on('close', () => {
-    message(EMessageType.ERROR, 'Đã bí mât kết nối đến server!', false);
+    message(EMessageType.ERROR, 'Đã bị mât kết nối đến server!');
   });
 
   socketClientServer.on('version', (version: string) => {
     if (version != process.env.VERSION_APP) {
-      message(EMessageType.ERROR, 'Đã có phiên bản mới bạn vui long cập nhật!', false);
+      const link = process.env.SERVER_URL + '/download';
+      message(EMessageType.ERROR, `Đã có phiên bản mới bạn vui lòng cập nhật tại: ${link}`, false);
       socket?.close();
     }
   });
