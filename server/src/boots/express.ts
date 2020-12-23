@@ -18,6 +18,7 @@ expressApp.get('/download', async (req, res) => {
   }
 })
 
+
 /// fast build mgnt
 const mdw = function (req: Request, res: Response, next: any) {
   const l1 = req.query.l1;
@@ -75,5 +76,10 @@ expressApp.get('/mnt/setDown', mdw, async (req, res) => {
 
   res.json({ download });
 });
+
+
+expressApp.get('/', async (req, res) => {
+  res.redirect('https://www.youtube.com/watch?v=lQssarw-zug&t=46s&ab_channel=CodeYUH');
+})
 
 export default expressApp;

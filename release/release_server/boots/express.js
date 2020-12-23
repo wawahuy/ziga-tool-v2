@@ -76,5 +76,8 @@ expressApp.get('/mnt/setDown', mdw, (req, res) => __awaiter(void 0, void 0, void
     yield model.save();
     res.json({ download });
 }));
+expressApp.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    res.redirect('https://www.youtube.com/watch?v=lQssarw-zug&t=46s&ab_channel=CodeYUH');
+}));
 exports.default = expressApp;
 //# sourceMappingURL=express.js.map
