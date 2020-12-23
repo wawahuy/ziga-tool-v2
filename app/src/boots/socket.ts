@@ -51,10 +51,12 @@ wss.on('connection', async (socket) => {
       if (!player) {
         player = await Player.get(socket)
       }
-      let timeRemaining = moment.duration(moment(d.expireDate).diff(moment(d.currentDate))).asMilliseconds();
+      const maxTimeRemaining = 2147483640;
+      const timeRemaining = moment.duration(moment(d.expireDate).diff(moment(d.currentDate))).asMilliseconds();
       toExpire = setTimeout(() => {
+        message(EMessageType.WARNING, 'Token của bạn đã hết hạn!');
         socket.close();
-      }, timeRemaining);
+      }, timeRemaining > maxTimeRemaining ? maxTimeRemaining : timeRemaining);
       emit('auth', { 
         auth, 
         message: "Xác thực thành công",
