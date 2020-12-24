@@ -8,4 +8,4 @@ npm run build-pkg
 
 cp ./bin/ucci.exe ./build/ucci.exe
 
-read -r -p "Press enter to continue"
+# read -r -p "Press enter to continue"
