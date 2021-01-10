@@ -1,0 +1,1 @@
+{"version":3,"file":"ziga_release.js","sourceRoot":"","sources":["../../src/models/ziga_release.ts"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;AAAA,qDAA6D;AAU7D,MAAM,iBAAiB,GAAW,IAAI,iBAAM,CAC1C;IACE,QAAQ,EAAE,EAAE,IAAI,EAAE,MAAM,EAAE;CAC3B,EACD,EAAE,UAAU,EAAE,IAAI,EAAE,CACrB,CAAC;AAEF,MAAM,SAAS,GAAG,kBAAQ,CAAC,KAAK,CAC9B,cAAc,EACd,iBAAiB,CAClB,CAAC;AAEF,kBAAe,SAAS,CAAC"}
