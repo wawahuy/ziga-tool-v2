@@ -1,7 +1,6 @@
 console.log('version updating...');
 
 const fs = require('fs');
-const { version } = require('os');
 const path = require('path');
 
 function updateByFile(filename) {
@@ -17,7 +16,6 @@ function updateByFile(filename) {
   const matchApp = patternVersionApp.exec(content);
   const matchUi = patternVersionUi.exec(content);
 
-
   if (matchApp.groups && matchUi.groups) {
     const versionApp = matchApp.groups.version;
     const versionUi = matchUi.groups.version;
@@ -28,6 +26,9 @@ function updateByFile(filename) {
     content = content.replace(versionUi, (f) => {
       return Number(versionUi) + 1;
     });
+    console.log('version updated!');
+  } else {
+    console.log('version update failed!');
   }
 
   fs.writeFileSync(filename, content);

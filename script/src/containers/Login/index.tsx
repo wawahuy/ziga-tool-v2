@@ -7,10 +7,7 @@ import { IAuth, SocketService } from '../../services/SocketService';
 import { IContext } from '../../context';
 
 const packBuy = [
-  '  1d  -   10k',
-  ' 10d  -   80k',
-  ' 30d  -  190k',
-  '365d  - 1000k',
+  '  30d  -   100k',
 ];
 
 const STORAGE_TOKEN = 'yuh_token';
@@ -83,8 +80,6 @@ export default function Login(props: IContext) {
               content={
                 <>
                   <div className="sp">Vui lòng liên hệ qua zalo <b>(+84) 942 100 614</b> để được hổ trợ.</div>
-                  <div className="sp">Liên hệ hỗ trợ dùng thử 2h.</div>
-                  <div className="sp">Version test mua (x2 time)</div>
                   <div className="sp">Thông tin gói (vnđ):</div>
                   <List
                     className={styles.listBuy}
