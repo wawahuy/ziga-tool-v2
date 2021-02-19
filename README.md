@@ -1,6 +1,9 @@
 # Ziga Tool V2
   Tập hợp các công cụ chơi game cờ tướng mạng mẽ
 
+## Demo
+https://www.youtube.com/watch?v=lQssarw-zug
+
 ## Các sản phẩm bao gồm
   - project <b>script</b>: xây dựng code inject vào ziga
   - project <b>app</b>: xữ lí logic với stockfish & proxy với project server
