@@ -1,0 +1,24 @@
+(() => {
+  const loadCss = (n) => {
+    const head  = document.getElementsByTagName('head')[0];
+    const link  = document.createElement('link');
+    link.rel  = 'stylesheet';
+    link.type = 'text/css';
+    link.href = 'http://localhost:14342/inject/' + n;
+    link.media = 'all';
+    link.onerror = () => console.log('error stylesheet');
+    head.appendChild(link);
+  }
+
+  const loadScript = (n) => {
+    const script  = document.createElement('script');
+    script.src = 'http://localhost:14342/inject/' + n;
+    script.onerror = () => console.log('error script');
+    document.body.appendChild(script);
+  }
+
+  loadCss('vendors.css');
+  loadCss('inject.css');
+  loadScript('vendors.bundle.js');
+  loadScript('inject.bundle.js');
+})();

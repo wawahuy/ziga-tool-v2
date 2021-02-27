@@ -50,6 +50,8 @@ export default function Login(props: IContext) {
         <div>
           <Input
             allowClear
+            disabled={true}
+            value="VERSION_FREE"
             className={styles.keyInput}
             defaultValue={token}
             onChange={(e) => setToken(e.target.value)}
@@ -57,6 +59,7 @@ export default function Login(props: IContext) {
             placeholder="nhập token tại đây"
             prefix={<LockOutlined />} /> <br/>
           <Checkbox
+            disabled={true}
             className={styles.checkbox}
             checked={saveToken}
             onChange={(e) => setSaveToken(e.target.checked)}
@@ -80,21 +83,6 @@ export default function Login(props: IContext) {
               content={
                 <>
                   <div className="sp">Vui lòng liên hệ qua zalo <b>(+84) 942 100 614</b> để được hổ trợ.</div>
-                  <div className="sp">Thông tin gói (vnđ):</div>
-                  <List
-                    className={styles.listBuy}
-                    bordered={false}
-                    itemLayout="horizontal"
-                    dataSource={packBuy}
-                    renderItem={(item: any) => (
-                      <List.Item>
-                        <List.Item.Meta
-                          avatar={<ShoppingOutlined />}
-                          title={item}
-                        />
-                      </List.Item>
-                    )}
-                  />
                 </>
                 }
               title="Mua token"
