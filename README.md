@@ -2,7 +2,7 @@
   Tập hợp các công cụ chơi game cờ tướng mạng mẽ
 
 ## Demo
-https://www.youtube.com/watch?v=lQssarw-zug
+https://www.youtube.com/watch?v=Dec5bKYWv8Q&ab_channel=CodeYUH
 
 ## Các sản phẩm bao gồm
   - project <b>script</b>: xây dựng code inject vào ziga
