@@ -6,6 +6,7 @@
   "scripts": {
     "build-pkg": "rimraf ./build && pkg --output build/yuh-tool .",
     "dev": "env-cmd -f ../env/dev.env nodemon",
+    "prod": "env-cmd -f ../env/prod.env nodemon",
     "build": "rimraf ./dist && tsc"
   },
   "pkg": {

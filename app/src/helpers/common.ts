@@ -10,9 +10,16 @@ export function isApp() {
 
 export function pathEngineUCCI() {
   if (isApp()) {
-    return path.join(process.cwd(), 'ucci.exe');
+    return path.join(process.cwd(), 'ucci14.exe');
   }
-  return path.join(__dirname, '../../bin/ucci.exe');
+  return path.join(__dirname, '../../bin/ucci14.exe');
+}
+
+export function getPath(p: string) {
+  if (isApp()) {
+    return path.join(process.cwd(), p);
+  }
+  return path.join(__dirname, '../../bin/', p);  
 }
 
 export function log(...args: any[]) {

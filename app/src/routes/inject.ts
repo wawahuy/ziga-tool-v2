@@ -17,7 +17,7 @@ router.get('*', (req, res) => {
     return;
   }
 
-  let host = process.env.INJECT_PUBLIC_URL as string + '/inject';
+  let host = process.env.INJECT_PUBLIC_URL as string;
   const url = host + path;
   const getContent = request(url, function (error, response, body) {
     if (error) {
