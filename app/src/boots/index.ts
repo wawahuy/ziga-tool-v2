@@ -6,10 +6,10 @@ import expressApp from './express';
 import wss from './socket';
 import fs from 'fs';
 
-const options = {
-  key: fs.readFileSync(getPath('ssl/key.pem')),
-  cert: fs.readFileSync(getPath('ssl/cert.pem'))
-};
+// const options = {
+//   key: fs.readFileSync(getPath('ssl/key.pem')),
+//   cert: fs.readFileSync(getPath('ssl/cert.pem'))
+// };
 
 const server = http.createServer(expressApp);
 
