@@ -4,6 +4,7 @@ import { EUCCIOption, UCCI } from './ucci';
 import System from './system';
 import * as _ from 'lodash';
 import { getPath, isProduction, log } from './common';
+import fs from 'fs';
 
 class Player extends EventEmitter {
   engine!: UCCI;
@@ -38,8 +39,10 @@ class Player extends EventEmitter {
     const info = await System.get();
     const isProd = isProduction();
     // const isProd = true;
-    const threads = Math.min(info.cpu.cores, isProd ? 512 : 2);
-    const memory = Math.min(Math.round(info.memory.free/1024/1024*0.5), isProd ? 1024 : 16);
+    // const threads = Math.min(info.cpu.cores, isProd ? 512 : 4);
+    // const memory = Math.min(Math.round(info.memory.free/1024/1024*0.5), isProd ? 1024 : 16);
+    const threads = 1;
+    const memory = 16;
     this.engine.load();
     this.engine.ucci();
     this.engine.on('ucciok', () => {
