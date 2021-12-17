@@ -42,7 +42,7 @@ class Player extends EventEmitter {
     // const threads = Math.min(info.cpu.cores, isProd ? 512 : 4);
     // const memory = Math.min(Math.round(info.memory.free/1024/1024*0.5), isProd ? 1024 : 16);
     const threads = 1;
-    const memory = 16;
+    const memory = 128;
     this.engine.load();
     this.engine.ucci();
     this.engine.on('ucciok', () => {
@@ -143,6 +143,7 @@ class Player extends EventEmitter {
     log(postion);
     this.engine.command(postion);
     this.engine.command('go depth ' + this.depth);
+    // this.engine.command('go movetime 25000');
     this.send('startfindmove', {});
   }
 
