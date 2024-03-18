@@ -1,12 +1,15 @@
 # Ziga Tool V2
-  Tập hợp các công cụ chơi game cờ tướng mạng mẽ
-  
-## Lỗi
-- Ngày 20/12/2022,zigavn upgrade version mới, với cocos2D engine mới, nên toàn bộ script hook không hoạt động
+Collection of networked Chinese chess game tools
 
-## Note
-- Chưa viết shell build
-- Bạn split từ main ra
+# Maintenance:
+## 18/03/2024 - Currently, I am planning to resume its development and eagerly welcome contributions from the community.
+
+# Issues
+On December 20, 2022, Zigavn upgraded to a new version with a new cocos2D engine, causing all script hooks to malfunction.
+
+# Notes
+Shell build has not been written yet.
+You should split it from the main.
 
 ## Demo
 https://www.youtube.com/watch?v=Dec5bKYWv8Q
