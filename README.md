@@ -1,9 +1,6 @@
 # Ziga Tool V2
 Collection of networked Chinese chess game tools
 
-# Maintenance:
-## 18/03/2024 - Currently, I am planning to resume its development and eagerly welcome contributions from the community.
-
 # Issues
 On December 20, 2022, Zigavn upgraded to a new version with a new cocos2D engine, causing all script hooks to malfunction.
 
